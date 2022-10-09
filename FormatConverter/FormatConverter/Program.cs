@@ -27,6 +27,8 @@ namespace FormatConverter
 
             _logger = serviceProvider.GetService<ILogger<Program>>();
 
+            var pos = serviceProvider.GetService<IPositionsMetaData>();
+
             //var config = serviceProvider.GetService<IOptions<AppSettingsOptions>>()?.Value;       //delete this line (its from template)
             //var testValFromConfig = config?.TestObject?.TestValue;     //delete this line (its from template)
         }
@@ -39,8 +41,8 @@ namespace FormatConverter
                 .AddAutoMapper(typeof(Program))
                 .Configure<AppSettingsOptions>(
                     config.GetSection("AppSettings"))
-                .Configure<TestObjectOptions>(
-                    config.GetSection("TestObject"));
+                .Configure<PositionNamesOptions>(
+                    config.GetSection("AppSettings").GetSection("PositionNames"));
 
             services.AddLogging(builder =>
             {
@@ -49,8 +51,8 @@ namespace FormatConverter
             });
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
-            //services
-            //.AddTransient<IExampleClass, ExampleClass>();             //delete this line (its from template) 
+            services
+                .AddTransient<IPositionsMetaData, PositionsMetaData>();             //delete this line (its from template) 
         }
 
         private static IConfiguration SetupConfiguration()
