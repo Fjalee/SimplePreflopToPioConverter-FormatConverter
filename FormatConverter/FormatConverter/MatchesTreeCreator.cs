@@ -23,8 +23,9 @@ namespace FormatConverter
         public MatchesTree Create(string inputDir)
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
-            childDirs = RemoveVsBetFolderFromDirs(childDirs);
-            childDirs = RemoveFileExtensionFromDirs(childDirs);
+
+            var turnStrings = RemoveFileExtensionFromDirs(childDirs);
+            turnStrings = RemoveVsBetFolderFromDirs(turnStrings);
 
             return null;
         }
@@ -79,5 +80,27 @@ namespace FormatConverter
 
             return distinctChildDirs;
         }
+
+
+
+        //static void Temp()
+        //{
+        //    var inputDir = ;
+
+        //    //var inputFolderName = inputDir.Split('\\').Last();
+        //    //var rootDir = inputDir[..(inputDir.Length - inputFolderName.Length - 1)];
+
+        //    //Directory.CreateDirectory(@"C:\Users\cepRy\Desktop\testDir\sb\bb\utg");
+
+
+        //    var allDirsString = "";
+        //    distinctDirs.ForEach(d =>
+        //    {
+        //        allDirsString += d;
+        //        allDirsString += "asfdgdfdsfgf";
+        //    });
+
+        //    return;
+        //}
     }
 }
