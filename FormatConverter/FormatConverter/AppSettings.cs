@@ -3,6 +3,7 @@
     public class AppSettingsOptions
     {
         public PositionNamesOptions? PositionNames { get; set; }
+        public string? InputDir { get; set; }
     }
 
     public class PositionNamesOptions

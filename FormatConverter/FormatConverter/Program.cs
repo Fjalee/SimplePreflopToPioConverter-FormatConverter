@@ -10,6 +10,7 @@ namespace FormatConverter
     public class Program
     {
         private static ILogger<Program>? _logger;
+        private static AppSettingsOptions _config;
 
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
@@ -26,11 +27,10 @@ namespace FormatConverter
             var serviceProvider = services.BuildServiceProvider();
 
             _logger = serviceProvider.GetService<ILogger<Program>>();
+            _config = serviceProvider.GetService<IOptions<AppSettingsOptions>>().Value;
 
-            var pos = serviceProvider.GetService<IPositionsMetaData>();
-
-            //var config = serviceProvider.GetService<IOptions<AppSettingsOptions>>()?.Value;       //delete this line (its from template)
-            //var testValFromConfig = config?.TestObject?.TestValue;     //delete this line (its from template)
+            var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
+            matchesTreeCreator.Create(_config.InputDir);
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -52,7 +52,8 @@ namespace FormatConverter
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
             services
-                .AddTransient<IPositionsMetaData, PositionsMetaData>();             //delete this line (its from template) 
+                .AddSingleton<IPositionsMetaData, PositionsMetaData>()             //delete this line (its from template) 
+                .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>();
         }
 
         private static IConfiguration SetupConfiguration()

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace FormatConverter
 {
@@ -15,7 +14,7 @@ namespace FormatConverter
         public Player CO { get; set; }
         public Player BTN { get; set; }
 
-        public PositionsMetaData(IOptions<PositionNamesOptions> _positionNamesConfig, ILogger<PositionsMetaData> logger)
+        public PositionsMetaData(IOptions<PositionNamesOptions> _positionNamesConfig)
         {
             if(_positionNamesConfig.Value.SBName == null ||
                _positionNamesConfig.Value.BBName == null ||
@@ -27,7 +26,7 @@ namespace FormatConverter
                _positionNamesConfig.Value.COName == null ||
                _positionNamesConfig.Value.BTNName == null)
             {
-                logger.LogCritical("Not all positions names were set");
+                throw new ArgumentException("Not all positions names were set");
             }
 
             SB = new Player() { Name = _positionNamesConfig.Value.SBName };
