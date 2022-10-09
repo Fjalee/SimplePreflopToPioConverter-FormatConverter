@@ -41,8 +41,10 @@ namespace FormatConverter
                 .AddAutoMapper(typeof(Program))
                 .Configure<AppSettingsOptions>(
                     config.GetSection("AppSettings"))
-                .Configure<PositionNamesOptions>(
-                    config.GetSection("AppSettings").GetSection("PositionNames"));
+                .Configure<OutputPositionNamesOptions>(
+                    config.GetSection("AppSettings").GetSection("OutputPositionNames"))
+                .Configure<InputPositionNamesOptions>(
+                    config.GetSection("AppSettings").GetSection("InputPositionNames"));
 
             services.AddLogging(builder =>
             {
@@ -52,7 +54,8 @@ namespace FormatConverter
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
             services
-                .AddSingleton<IPositionsMetaData, PositionsMetaData>()             //delete this line (its from template) 
+                .AddSingleton<IOutputPositionsMetaData, OutputPositionsMetaData>()
+                .AddSingleton<IInputPositionsMetaData, InputPositionsMetaData>()
                 .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>();
         }
 
