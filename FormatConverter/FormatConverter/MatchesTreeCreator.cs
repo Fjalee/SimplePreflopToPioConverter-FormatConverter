@@ -9,26 +9,27 @@ namespace FormatConverter
     public class MatchesTreeCreator : IMatchesTreeCreator
     {
         private readonly ILogger<MatchesTreeCreator> _logger;
-        private readonly IPositionsMetaData _positionsMetaData;
+        private readonly IOutputPositionsMetaData _outputPositionsMetaData;
         private readonly AppSettingsOptions _config;
 
-        public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger,IPositionsMetaData positionsMetaData,
+        public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOutputPositionsMetaData outputPositionsMetaData,
             IOptions<AppSettingsOptions> configOptions)
         {
             _logger = logger;
-            _positionsMetaData = positionsMetaData;
+            _outputPositionsMetaData = outputPositionsMetaData;
             _config = configOptions.Value;
         }
 
         public MatchesTree Create(string inputDir)
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
-            RemoveVsBetFolderFromDir(childDirs);
+            childDirs = RemoveVsBetFolderFromDirs(childDirs);
+            childDirs = RemoveFileExtensionFromDirs(childDirs);
 
             return null;
         }
 
-        private List<string> RemoveVsBetFolderFromDir(List<string> dirs)
+        private List<string> RemoveVsBetFolderFromDirs(List<string> dirs)
         {
             var removedAtleastOne = false;
 
@@ -53,6 +54,17 @@ namespace FormatConverter
                 _logger.LogWarning("No vsbet folders were found (eg. 'vs_3bet')");
             }
 
+            return result;
+        }
+
+        private List<string> RemoveFileExtensionFromDirs(List<string> dirs)
+        {
+            var result = new List<string>();
+            foreach (var dir in dirs)
+            {
+                var extension = dir.Split(".").Last();
+                result.Add(dir[..(dir.Length - extension.Length - 1)]);
+            }
             return result;
         }
 
