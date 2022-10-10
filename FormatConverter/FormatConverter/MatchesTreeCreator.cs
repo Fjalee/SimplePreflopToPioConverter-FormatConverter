@@ -63,6 +63,7 @@ namespace FormatConverter
             var callString = _config.InputPatterns.ActionNames.Call;
             var foldString = _config.InputPatterns.ActionNames.Fold;
             var allInString = _config.InputPatterns.ActionNames.AllIn;
+            var checkString = _config.InputPatterns.ActionNames.Check;
 
             var raiseString = _config.InputPatterns.ActionNames.Raise;
             var amountCurrencyString = _config.InputPatterns.AmountCurrency;
@@ -70,6 +71,10 @@ namespace FormatConverter
             if (action == callString)
             {
                 return new Tuple<TurnActionEnum, string>(TurnActionEnum.Call, null);
+            }
+            if (action == checkString)
+            {
+                return new Tuple<TurnActionEnum, string>(TurnActionEnum.Check, null);
             }
             if (action == foldString)
             {

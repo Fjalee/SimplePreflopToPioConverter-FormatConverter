@@ -5,6 +5,7 @@
         Fold,
         Call,
         Raise,
-        AllIn
+        AllIn,
+        Check
     }
 }

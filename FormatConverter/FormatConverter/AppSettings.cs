@@ -31,6 +31,7 @@
         public string Fold { get; set; }
         public string AllIn { get; set; }
         public string Raise { get; set; }
+        public string Check { get; set; }
     }
 
     public class OutputActionNamesOptions
@@ -39,6 +40,7 @@
         public string Fold { get; set; }
         public string AllIn { get; set; }
         public string Raise { get; set; }
+        public string Check { get; set; }
     }
 
     public class OutputPositionNamesOptions
