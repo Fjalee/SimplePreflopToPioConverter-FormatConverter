@@ -5,7 +5,7 @@
         public Player Player { get; set; }
         public TurnActionEnum Action { get; set; }
         public string Strategy { get; set; }
-        public double? RaiseAmountInBB { get; set; }
+        public string? RaiseAmountInBB { get; set; }
 
         public Turn(Player player, TurnActionEnum action, string strategy)
         {

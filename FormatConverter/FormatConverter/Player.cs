@@ -9,7 +9,7 @@
         {
             if(String.IsNullOrEmpty(positionName))
             {
-                throw new ArgumentNullException("Passed player PostionName is \"" + PositionName + "\". It must not be null or empty");
+                throw new ArgumentNullException("Passed player PostionName is \"" + positionName + "\". It must not be null or empty");
             }
             PositionName = positionName;
             Position = position;

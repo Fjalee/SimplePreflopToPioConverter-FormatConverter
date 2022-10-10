@@ -2,27 +2,34 @@
 {
     public class PositionsMetaData
     {
-        public Player SB { get; set; }
-        public Player BB { get; set; }
-        public Player UTG { get; set; }
-        public Player MP1 { get; set; }
-        public Player MP2 { get; set; }
-        public Player MP3 { get; set; }
-        public Player HIJ { get; set; }
-        public Player CO { get; set; }
-        public Player BTN { get; set; }
+        public List<Player> Postions { get; set; }
 
         public PositionsMetaData(string SBName, string BBName, string UTGName, string MP1Name, string MP2Name, string MP3Name, string HIJName, string COName, string BTNName)
         {
-            SB = new Player(SBName, PositionEnum.SB);
-            BB = new Player(BBName, PositionEnum.BB);
-            UTG = new Player(UTGName, PositionEnum.UTG);
-            MP1 = new Player(MP1Name, PositionEnum.MP1);
-            MP2 = new Player(MP2Name, PositionEnum.MP2);
-            MP3 = new Player(MP3Name, PositionEnum.MP3);
-            HIJ = new Player(HIJName, PositionEnum.HIJ);
-            CO = new Player(COName, PositionEnum.CO);
-            BTN = new Player(BTNName, PositionEnum.BTN);
+            Postions = new List<Player>()
+            {
+                new Player(SBName, PositionEnum.SB),
+                new Player(BBName, PositionEnum.BB),
+                new Player(UTGName, PositionEnum.UTG),
+                new Player(MP1Name, PositionEnum.MP1),
+                new Player(MP2Name, PositionEnum.MP2),
+                new Player(MP3Name, PositionEnum.MP3),
+                new Player(HIJName, PositionEnum.HIJ),
+                new Player(COName, PositionEnum.CO),
+                new Player(BTNName, PositionEnum.BTN)
+            };
+        }
+
+        public Player GetPlayer(string positionString)
+        {
+            var player = Postions.FirstOrDefault(p => p.PositionName == positionString);
+            return player;
+        }
+
+        public Player GetPlayer(PositionEnum positionEnum)
+        {
+            var player = Postions.FirstOrDefault(p => p.Position == positionEnum);
+            return player;
         }
     }
 }

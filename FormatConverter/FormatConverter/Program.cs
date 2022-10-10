@@ -32,8 +32,8 @@ namespace FormatConverter
             _logger = serviceProvider.GetService<ILogger<Program>>();
             _config = serviceProvider.GetService<IOptions<AppSettingsOptions>>().Value;
 
-            InputPositionsMetaData = new PositionsMetaData(_config.InputPositionNames.SBName, _config.InputPositionNames.BBName, _config.InputPositionNames.UTGName, _config.InputPositionNames.MP1Name, _config.InputPositionNames.MP2Name, _config.InputPositionNames.MP3Name, _config.InputPositionNames.HIJName, _config.InputPositionNames.COName, _config.InputPositionNames.BTNName);
-            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPositionNames.SBName, _config.OutputPositionNames.BBName, _config.OutputPositionNames.UTGName, _config.OutputPositionNames.MP1Name, _config.OutputPositionNames.MP2Name, _config.OutputPositionNames.MP3Name, _config.OutputPositionNames.HIJName, _config.OutputPositionNames.COName, _config.OutputPositionNames.BTNName);
+            InputPositionsMetaData = new PositionsMetaData(_config.InputPatterns.PositionNames.SBName, _config.InputPatterns.PositionNames.BBName, _config.InputPatterns.PositionNames.UTGName, _config.InputPatterns.PositionNames.MP1Name, _config.InputPatterns.PositionNames.MP2Name, _config.InputPatterns.PositionNames.MP3Name, _config.InputPatterns.PositionNames.HIJName, _config.InputPatterns.PositionNames.COName, _config.InputPatterns.PositionNames.BTNName);
+            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPatterns.PositionNames.SBName, _config.OutputPatterns.PositionNames.BBName, _config.OutputPatterns.PositionNames.UTGName, _config.OutputPatterns.PositionNames.MP1Name, _config.OutputPatterns.PositionNames.MP2Name, _config.OutputPatterns.PositionNames.MP3Name, _config.OutputPatterns.PositionNames.HIJName, _config.OutputPatterns.PositionNames.COName, _config.OutputPatterns.PositionNames.BTNName);
 
             var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
             matchesTreeCreator.Create(_config.InputDir);
@@ -49,9 +49,9 @@ namespace FormatConverter
                 .Configure<AppSettingsOptions>(
                     config.GetSection("AppSettings"))
                 .Configure<OutputPositionNamesOptions>(
-                    config.GetSection("AppSettings").GetSection("OutputPositionNames"))
+                    config.GetSection("AppSettings").GetSection("OutputPatterns.OutputPositionNames"))
                 .Configure<InputPositionNamesOptions>(
-                    config.GetSection("AppSettings").GetSection("InputPositionNames"));
+                    config.GetSection("AppSettings").GetSection("InputPatterns.InputPositionNames"));
 
             services.AddLogging(builder =>
             {

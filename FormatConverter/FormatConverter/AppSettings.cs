@@ -2,11 +2,43 @@
 {
     public class AppSettingsOptions
     {
+        public OutputPatternsOptions OutputPatterns { get; set; }
+        public InputPatternsOptions InputPatterns { get; set; }
         public OutputPositionNamesOptions OutputPositionNames { get; set; }
-        public OutputPositionNamesOptions InputPositionNames { get; set; }
+        public InputPositionNamesOptions InputPositionNames { get; set; }
         public string InputDir { get; set; }
         public string RegexForVsBetFolder { get; set; }
         public string SeperatorForWordsInFileName { get; set; }
+    }
+
+    public class InputPatternsOptions
+    {
+        public InputPositionNamesOptions PositionNames { get; set; }
+        public InputActionNamesOptions ActionNames { get; set; }
+        public string AmountCurrency { get; set; }
+    }
+
+    public class OutputPatternsOptions
+    {
+        public OutputPositionNamesOptions PositionNames { get; set; }
+        public OutputActionNamesOptions ActionNames { get; set; }
+        public string AmountCurrency { get; set; }
+    }
+
+    public class InputActionNamesOptions
+    {
+        public string Call { get; set; }
+        public string Fold { get; set; }
+        public string AllIn { get; set; }
+        public string Raise { get; set; }
+    }
+
+    public class OutputActionNamesOptions
+    {
+        public string Call { get; set; }
+        public string Fold { get; set; }
+        public string AllIn { get; set; }
+        public string Raise { get; set; }
     }
 
     public class OutputPositionNamesOptions

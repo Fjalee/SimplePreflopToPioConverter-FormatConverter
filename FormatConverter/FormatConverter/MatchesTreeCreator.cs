@@ -1,5 +1,6 @@
 ﻿using FormatConverter.InputFile;
 using FormatConverter.TreeModel;
+using static FormatConverter.Program;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,8 +25,69 @@ namespace FormatConverter
 
             var childFiles = ParseFileNamesFromDirs(childDirs);
             var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
+            var turns = CreateTurnsFromActionPairs(playersAndActions);
 
             return null;
+        }
+
+        private List<List<Turn>> CreateTurnsFromActionPairs(List<List<PlayerAndActionStringPair>> pairsStrings)
+        {
+            var result = new List<List<Turn>>();
+
+            foreach (var pairs in pairsStrings)
+            {
+                var turns = new List<Turn>();
+
+                foreach (var p in pairs)
+                {
+                    var player = InputPositionsMetaData.GetPlayer(p.Player);
+
+                    var actionAndAmount = ParseAction(p.Action);
+                    var action = actionAndAmount.Item1;
+
+                    var strategy = ""; //fix get from txt
+
+                    var turn = new Turn(player, action, strategy);
+                    turn.RaiseAmountInBB = actionAndAmount.Item2;
+                    turns.Add(turn);
+                }
+
+                result.Add(turns);
+            }
+
+            return result;
+        }
+
+        private Tuple<TurnActionEnum, string> ParseAction(string action)
+        {
+            var callString = _config.InputPatterns.ActionNames.Call;
+            var foldString = _config.InputPatterns.ActionNames.Fold;
+            var allInString = _config.InputPatterns.ActionNames.AllIn;
+
+            var raiseString = _config.InputPatterns.ActionNames.Raise;
+            var amountCurrencyString = _config.InputPatterns.AmountCurrency;
+
+            if (action == callString)
+            {
+                return new Tuple<TurnActionEnum, string>(TurnActionEnum.Call, null);
+            }
+            if (action == foldString)
+            {
+                return new Tuple<TurnActionEnum, string>(TurnActionEnum.Fold, null);
+            }
+            if (action == allInString)
+            {
+                return new Tuple<TurnActionEnum, string>(TurnActionEnum.AllIn, null);
+            }
+
+            var raiseAmountRegex = new Regex("[\\d]+.[\\d]+");
+            var raiseAmount = raiseAmountRegex.Match(action).Value;
+            if (action == raiseString + raiseAmount + amountCurrencyString)
+            {
+                return new Tuple<TurnActionEnum, string>(TurnActionEnum.Raise, raiseAmount);
+            }
+
+            throw new InvalidDataException("Could now parse action \"" + action + "\"");
         }
 
         private List<List<PlayerAndActionStringPair>> ParsePlayerAndActionFromFileNames(List<string> fileNames)

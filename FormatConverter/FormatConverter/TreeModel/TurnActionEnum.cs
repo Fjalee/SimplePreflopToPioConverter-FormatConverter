@@ -4,6 +4,7 @@
     {
         Fold,
         Call,
-        Raise
+        Raise,
+        AllIn
     }
 }
