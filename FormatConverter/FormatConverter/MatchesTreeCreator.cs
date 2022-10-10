@@ -34,8 +34,86 @@ namespace FormatConverter
 
             ThrowIfAnyPositionWasSkippedInTurn(turnsBranches, positionsInUse);
             ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
+            ThrowIfIllegalMove(turnsBranches, positionsInUse);
 
             return null;
+        }
+
+        private void ThrowIfIllegalMove(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
+        {
+            foreach (var turns in branches)
+            {
+                var positionsStillInPlay = positionsInUse.ToList();
+                var roundOrder = positionsStillInPlay.ToList();
+                var availableActionPriority = (int)TurnActionEnum.Call;
+                PositionEnum posInitiatedBiggestRaise = PositionEnum.BB;
+                var checkAvailable = false;
+                var callAmoount = 1.0;
+                foreach (var t in turns)
+                {
+                    if (t.RaiseAmountInBB != null)
+                    {
+                        var raiseAmount = Convert.ToDouble(t.RaiseAmountInBB);
+                        if (raiseAmount == 0)
+                        {
+                            throw new Exception("Couldn't convert raise amount string to double");
+                        }
+                        if (t.Action == TurnActionEnum.Raise && raiseAmount <= callAmoount)
+                        {
+                            throw new Exception("Illegal action " + t.Action);
+                        }
+                    }
+
+                    if (t.Player.Position != roundOrder.First())
+                    {
+                        throw new Exception(t.Player.Position + " moved instead of " + roundOrder.First());
+                    }
+                    if ((int)t.Action < availableActionPriority)
+                    {
+                        throw new Exception("Illegal action " + t.Action);
+                    }
+                    if ((t.Action == TurnActionEnum.Fold || t.Action == TurnActionEnum.Call || t.Action == TurnActionEnum.Check)
+                        && !String.IsNullOrEmpty(t.RaiseAmountInBB))
+                    {
+                        throw new Exception(t.Action + " action can't have raise amount " + t.RaiseAmountInBB);
+                    }
+                    if (t.Player.Position == posInitiatedBiggestRaise
+                        && availableActionPriority == (int)TurnActionEnum.AllIn)
+                    {
+                        throw new Exception("Moved after everyone Folded or AllIn'ed");
+                    }
+                    if (!checkAvailable && t.Action == TurnActionEnum.Check)
+                    {
+                        throw new Exception("Illegal check");
+                    }
+
+                    if (t.Player.Position == posInitiatedBiggestRaise || (int)t.Action > availableActionPriority)
+                    {
+                        availableActionPriority = (int)t.Action;
+                        posInitiatedBiggestRaise = t.Player.Position;
+                        if (t.Action == TurnActionEnum.Check)
+                        {
+                            checkAvailable = true;
+                        }
+                    }
+                    if (t.Action == TurnActionEnum.Raise
+                        || t.Action == TurnActionEnum.AllIn && availableActionPriority < (int)TurnActionEnum.AllIn)
+                    {
+                        posInitiatedBiggestRaise = t.Player.Position;
+                        availableActionPriority = (int)t.Action;
+                    }
+                    if (t.Action == TurnActionEnum.Fold)
+                    {
+                        positionsStillInPlay.Remove(t.Player.Position);
+                    }
+
+                    roundOrder.Remove(t.Player.Position);
+                    if (roundOrder.Count == 0)
+                    {
+                        roundOrder = positionsStillInPlay.ToList();
+                    }
+                }
+            }
         }
 
         private void ThrowIfPlayerMovesAfterFold(List<List<Turn>> branches, List<PositionEnum> positionsInUse)

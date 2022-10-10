@@ -2,10 +2,10 @@
 {
     public enum TurnActionEnum
     {
-        Fold,
+        Check,
         Call,
         Raise,
         AllIn,
-        Check
+        Fold
     }
 }
