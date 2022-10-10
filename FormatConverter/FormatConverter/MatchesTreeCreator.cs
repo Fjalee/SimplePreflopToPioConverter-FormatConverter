@@ -1,4 +1,5 @@
-﻿using FormatConverter.TreeModel;
+﻿using FormatConverter.InputFile;
+using FormatConverter.TreeModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,8 +26,36 @@ namespace FormatConverter
             var childDirs = GetInputDirectoryChildren(inputDir);
 
             var childFiles = ParseFileNamesFromDirs(childDirs);
+            var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
 
             return null;
+        }
+
+        private List<List<PlayerAndActionStringPair>> ParsePlayerAndActionFromFileNames(List<string> fileNames)
+        {
+            var result = new List<List<PlayerAndActionStringPair>>();
+
+            var seperator = _config.SeperatorForWordsInFileName;
+            foreach (var fileName in fileNames)
+            {
+                var resultItem = new List<PlayerAndActionStringPair>();
+
+                var splits = fileName.Split(seperator);
+                for (var i = 0; i < splits.Length; i+=2)
+                {
+                    var newPair = new PlayerAndActionStringPair(splits[i], splits[i + 1]);
+                    resultItem.Add(newPair);
+                }
+
+                if(splits.Length/2 != resultItem.Count)
+                {
+                    throw new Exception("function ParsePlayerAndActionFromFileNames malfunctioned");
+                }
+
+                result.Add(resultItem);
+            }
+
+            return result;
         }
 
         private List<string> ParseFileNamesFromDirs(List<string> dirs)

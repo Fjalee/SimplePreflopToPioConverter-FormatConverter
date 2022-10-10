@@ -6,6 +6,7 @@
         public OutputPositionNamesOptions InputPositionNames { get; set; }
         public string InputDir { get; set; }
         public string RegexForVsBetFolder { get; set; }
+        public string SeperatorForWordsInFileName { get; set; }
     }
 
     public class OutputPositionNamesOptions
