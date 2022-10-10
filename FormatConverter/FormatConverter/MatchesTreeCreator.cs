@@ -10,14 +10,11 @@ namespace FormatConverter
     public class MatchesTreeCreator : IMatchesTreeCreator
     {
         private readonly ILogger<MatchesTreeCreator> _logger;
-        private readonly IOutputPositionsMetaData _outputPositionsMetaData;
         private readonly AppSettingsOptions _config;
 
-        public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOutputPositionsMetaData outputPositionsMetaData,
-            IOptions<AppSettingsOptions> configOptions)
+        public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOptions<AppSettingsOptions> configOptions)
         {
             _logger = logger;
-            _outputPositionsMetaData = outputPositionsMetaData;
             _config = configOptions.Value;
         }
 

@@ -12,6 +12,9 @@ namespace FormatConverter
         private static ILogger<Program>? _logger;
         private static AppSettingsOptions _config;
 
+        public static PositionsMetaData InputPositionsMetaData { get; private set; }
+        public static PositionsMetaData OutputPositionsMetaData { get; private set; }
+
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
             _logger?.LogCritical("Unhandled exception occured\n" + (Exception)e.ExceptionObject);
@@ -29,8 +32,12 @@ namespace FormatConverter
             _logger = serviceProvider.GetService<ILogger<Program>>();
             _config = serviceProvider.GetService<IOptions<AppSettingsOptions>>().Value;
 
+            InputPositionsMetaData = new PositionsMetaData(_config.InputPositionNames.SBName, _config.InputPositionNames.BBName, _config.InputPositionNames.UTGName, _config.InputPositionNames.MP1Name, _config.InputPositionNames.MP2Name, _config.InputPositionNames.MP3Name, _config.InputPositionNames.HIJName, _config.InputPositionNames.COName, _config.InputPositionNames.BTNName);
+            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPositionNames.SBName, _config.OutputPositionNames.BBName, _config.OutputPositionNames.UTGName, _config.OutputPositionNames.MP1Name, _config.OutputPositionNames.MP2Name, _config.OutputPositionNames.MP3Name, _config.OutputPositionNames.HIJName, _config.OutputPositionNames.COName, _config.OutputPositionNames.BTNName);
+
             var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
             matchesTreeCreator.Create(_config.InputDir);
+
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -54,8 +61,6 @@ namespace FormatConverter
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
             services
-                .AddSingleton<IOutputPositionsMetaData, OutputPositionsMetaData>()
-                .AddSingleton<IInputPositionsMetaData, InputPositionsMetaData>()
                 .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>();
         }
 

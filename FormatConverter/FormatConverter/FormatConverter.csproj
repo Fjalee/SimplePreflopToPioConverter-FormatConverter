@@ -37,10 +37,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="InputPositionsMetaData.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
 </Project>
