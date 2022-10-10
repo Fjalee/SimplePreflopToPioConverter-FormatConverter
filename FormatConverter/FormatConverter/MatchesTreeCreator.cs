@@ -24,11 +24,14 @@ namespace FormatConverter
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
 
-            var turnStrings = RemoveFileExtensionFromDirs(childDirs);
-            turnStrings = RemoveInputFolderPathFromDirs(turnStrings, inputDir);
-            turnStrings = RemoveVsBetFolderFromDirs(turnStrings);
+            var childFiles = ParseFileNamesFromDirs(childDirs);
 
             return null;
+        }
+
+        private List<string> ParseFileNamesFromDirs(List<string> dirs)
+        {
+            return dirs.Select(d => Path.GetFileNameWithoutExtension(d)).ToList();
         }
 
         private List<string> RemoveInputFolderPathFromDirs(List<string> dirs, string inputDir)
