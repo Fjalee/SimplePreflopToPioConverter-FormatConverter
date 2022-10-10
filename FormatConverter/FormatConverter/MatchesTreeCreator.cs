@@ -25,14 +25,62 @@ namespace FormatConverter
 
             var childFiles = ParseFileNamesFromDirs(childDirs);
             var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
-            var turns = CreateTurnsFromActionPairs(playersAndActions);
+            var turnsBranches = CreateTurnsFromActionPairs(playersAndActions);
 
-            var positionsInUse = GetWhatPositionsAreInUse(turns);
+            var positionsInUse = GetWhatPositionsAreInUse(turnsBranches);
             positionsInUse = CorrectOrderOfPositions(positionsInUse);
 
-            turns = AddMissingFolds(turns, positionsInUse);
+            turnsBranches = AddMissingFolds(turnsBranches, positionsInUse);
+
+            ThrowIfAnyPositionWasSkippedInTurn(turnsBranches, positionsInUse);
+            ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
 
             return null;
+        }
+
+        private void ThrowIfPlayerMovesAfterFold(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
+        {
+            foreach (var turns in branches)
+            {
+                var currPositions = positionsInUse.ToList();
+                foreach (var t in turns)
+                {
+                    if (t.Action == TurnActionEnum.Fold)
+                    {
+                        if (currPositions.Contains(t.Player.Position))
+                        {
+                            currPositions.Remove(t.Player.Position);
+                        }
+                        else
+                        {
+                            throw new Exception(t.Player.Position + " moved after a fold.");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ThrowIfAnyPositionWasSkippedInTurn(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
+        {
+            foreach (var turns in branches)
+            {
+                var currPositions = positionsInUse.ToList();
+                foreach (var t in turns)
+                {
+                    if(currPositions.Count() <= 0)
+                    {
+                        break;
+                    }
+                    if (currPositions.First() == t.Player.Position)
+                    {
+                        currPositions.Remove(t.Player.Position);
+                    }
+                    else
+                    {
+                        throw new Exception(currPositions.First() + " position wasn't found in a branch.");
+                    }
+                }
+            }
         }
 
         private List<List<Turn>> AddMissingFolds(List<List<Turn>> turnsBranches, List<PositionEnum> positionsInUse)
@@ -42,25 +90,29 @@ namespace FormatConverter
             foreach (var branch in turnsBranches)
             {
                 var currBranch = branch.ToList();
-                var currPositions = positionsInUse.ToList();
-                var currRound = currPositions.ToList();
+                var currPositionsInPlay = positionsInUse.ToList();
+                var currRound = currPositionsInPlay.ToList();
                 var newBranch = new List<Turn>();
 
-                while (currBranch.Count != 00)
+                while (currBranch.Count != 0)
                 {
                     if (currRound.Count == 0)
                     {
-                        currRound = currPositions.ToList();
+                        currRound = currPositionsInPlay.ToList();
                     }
                     var activePos = currRound.First();
                     var activeTurn = currBranch.First();
                     if (activeTurn.Player.Position != activePos)
                     {
-                        currPositions.Remove(activePos);
+                        currPositionsInPlay.Remove(activePos);
                         newBranch.Add(CreateFoldTurn(activePos));
                     }
                     else
                     {
+                        if (activeTurn.Action == TurnActionEnum.Fold)
+                        {
+                            currPositionsInPlay.Remove(activeTurn.Player.Position);
+                        }
                         currBranch.Remove(activeTurn);
                         newBranch.Add(activeTurn);
                     }
