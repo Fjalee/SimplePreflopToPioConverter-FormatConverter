@@ -34,55 +34,6 @@ namespace FormatConverter
             return dirs.Select(d => Path.GetFileNameWithoutExtension(d)).ToList();
         }
 
-        private List<string> RemoveInputFolderPathFromDirs(List<string> dirs, string inputDir)
-        {
-            var result = new List<string>();
-            foreach (var dir in dirs)
-            {
-                result.Add(dir[(inputDir.Length + 1)..]);
-            }
-            return result;
-        }
-
-        private List<string> RemoveVsBetFolderFromDirs(List<string> dirs)
-        {
-            var removedAtleastOne = false;
-
-            var result = new List<string>();
-            foreach (var dir in dirs)
-            {
-                var vsBetRegex = new Regex("\\\\" + _config.RegexForVsBetFolder);
-                var newDir = vsBetRegex.Replace(dir, "");
-                result.Add(newDir);
-
-                if (!removedAtleastOne)
-                {
-                    if (newDir != dir)
-                    {
-                        removedAtleastOne = true;
-                    }
-                }
-            }
-
-            if (!removedAtleastOne)
-            {
-                _logger.LogWarning("No vsbet folders were found (eg. 'vs_3bet')");
-            }
-
-            return result;
-        }
-
-        private List<string> RemoveFileExtensionFromDirs(List<string> dirs)
-        {
-            var result = new List<string>();
-            foreach (var dir in dirs)
-            {
-                var extension = dir.Split(".").Last();
-                result.Add(dir[..(dir.Length - extension.Length - 1)]);
-            }
-            return result;
-        }
-
         private List<string> GetInputDirectoryChildren(string inputDir)
         {
             var childDirs = Directory.GetFiles(inputDir, "*.*", SearchOption.AllDirectories).ToList();
@@ -94,5 +45,57 @@ namespace FormatConverter
 
             return distinctChildDirs;
         }
+
+
+
+
+        //private List<string> RemoveInputFolderPathFromDirs(List<string> dirs, string inputDir)
+        //{
+        //    var result = new List<string>();
+        //    foreach (var dir in dirs)
+        //    {
+        //        result.Add(dir[(inputDir.Length + 1)..]);
+        //    }
+        //    return result;
+        //}
+
+        //private List<string> RemoveVsBetFolderFromDirs(List<string> dirs)
+        //{
+        //    var removedAtleastOne = false;
+
+        //    var result = new List<string>();
+        //    foreach (var dir in dirs)
+        //    {
+        //        var vsBetRegex = new Regex("\\\\" + _config.RegexForVsBetFolder);
+        //        var newDir = vsBetRegex.Replace(dir, "");
+        //        result.Add(newDir);
+
+        //        if (!removedAtleastOne)
+        //        {
+        //            if (newDir != dir)
+        //            {
+        //                removedAtleastOne = true;
+        //            }
+        //        }
+        //    }
+
+        //    if (!removedAtleastOne)
+        //    {
+        //        _logger.LogWarning("No vsbet folders were found (eg. 'vs_3bet')");
+        //    }
+
+        //    return result;
+        //}
+
+        //private List<string> RemoveFileExtensionFromDirs(List<string> dirs)
+        //{
+        //    var result = new List<string>();
+        //    foreach (var dir in dirs)
+        //    {
+        //        var extension = dir.Split(".").Last();
+        //        result.Add(dir[..(dir.Length - extension.Length - 1)]);
+        //    }
+        //    return result;
+        //}
     }
 }
