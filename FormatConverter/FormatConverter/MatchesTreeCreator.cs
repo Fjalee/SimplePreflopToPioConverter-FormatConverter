@@ -46,7 +46,6 @@ namespace FormatConverter
                 var currRound = currPositions.ToList();
                 var newBranch = new List<Turn>();
 
-                var spin = 0;
                 while (currBranch.Count != 00)
                 {
                     if (currRound.Count == 0)
