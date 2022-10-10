@@ -27,7 +27,75 @@ namespace FormatConverter
             var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
             var turns = CreateTurnsFromActionPairs(playersAndActions);
 
+            var positionsInUse = GetWhatPositionsAreInUse(turns);
+            positionsInUse = CorrectOrderOfPositions(positionsInUse);
+
+            turns = AddStartingFolds(turns, positionsInUse);
+            var treeBranches = CreateTreeBranches(turns);
+
             return null;
+        }
+        private List<List<Turn>> AddStartingFolds(List<List<Turn>> turnsBranches, List<PositionEnum> positionsInUse)
+        {
+            var result = new List<List<Turn>>();
+
+            foreach (var branch in turnsBranches)
+            {
+                var indexOrderOfFirstNonFoldPosition = positionsInUse.IndexOf(branch.First().Player.Position);
+                var missingPositions = positionsInUse.GetRange(0, indexOrderOfFirstNonFoldPosition);
+                var missingFolds = missingPositions.Select(p => CreateFoldTurn(p)).ToList();
+                missingFolds.AddRange(branch);
+                result.Add(missingFolds);
+            }
+
+            return result;
+        }
+
+        private Turn CreateFoldTurn(PositionEnum position)
+        {
+            var result = new Turn(InputPositionsMetaData.GetPlayer(position), TurnActionEnum.Fold, "");
+            return result;
+        }
+
+        private List<PositionEnum> CorrectOrderOfPositions(List<PositionEnum> positions)
+        {
+            var result = PositionsOrder.ToList();
+
+            foreach (var p in PositionsOrder)
+            {
+                if (!positions.Contains(p))
+                {
+                    result.Remove(p);
+                }
+            }
+
+            return result;
+        }
+
+        private List<PositionEnum> GetWhatPositionsAreInUse(List<List<Turn>> turnsBranches)
+        {
+            var result = new List<PositionEnum>();
+
+            var flattenedList = turnsBranches.SelectMany(t => t).ToList();
+
+            foreach (var item in flattenedList)
+            {
+                if (!result.Contains(item.Player.Position))
+                {
+                    result.Add(item.Player.Position);
+                }
+            }
+
+            return result;
+        }
+             
+        private List<MatchesTreeNode> CreateTreeBranches(List<List<Turn>> turnBranches)
+        {
+            var result = new List<MatchesTreeNode>();
+
+
+
+            return result;
         }
 
         private List<List<Turn>> CreateTurnsFromActionPairs(List<List<PlayerAndActionStringPair>> pairsStrings)

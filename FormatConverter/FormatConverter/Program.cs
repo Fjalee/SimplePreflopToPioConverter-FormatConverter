@@ -14,6 +14,7 @@ namespace FormatConverter
 
         public static PositionsMetaData InputPositionsMetaData { get; private set; }
         public static PositionsMetaData OutputPositionsMetaData { get; private set; }
+        public static List<PositionEnum> PositionsOrder { get; set; } = new List<PositionEnum>() { PositionEnum.UTG, PositionEnum.MP1, PositionEnum.MP2, PositionEnum.MP3, PositionEnum.HIJ, PositionEnum.CO, PositionEnum.BTN, PositionEnum.SB, PositionEnum.BB };
 
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
