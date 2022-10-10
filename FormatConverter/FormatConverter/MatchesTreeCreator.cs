@@ -25,9 +25,20 @@ namespace FormatConverter
             var childDirs = GetInputDirectoryChildren(inputDir);
 
             var turnStrings = RemoveFileExtensionFromDirs(childDirs);
+            turnStrings = RemoveInputFolderPathFromDirs(turnStrings, inputDir);
             turnStrings = RemoveVsBetFolderFromDirs(turnStrings);
 
             return null;
+        }
+
+        private List<string> RemoveInputFolderPathFromDirs(List<string> dirs, string inputDir)
+        {
+            var result = new List<string>();
+            foreach (var dir in dirs)
+            {
+                result.Add(dir[(inputDir.Length + 1)..]);
+            }
+            return result;
         }
 
         private List<string> RemoveVsBetFolderFromDirs(List<string> dirs)
@@ -80,27 +91,5 @@ namespace FormatConverter
 
             return distinctChildDirs;
         }
-
-
-
-        //static void Temp()
-        //{
-        //    var inputDir = ;
-
-        //    //var inputFolderName = inputDir.Split('\\').Last();
-        //    //var rootDir = inputDir[..(inputDir.Length - inputFolderName.Length - 1)];
-
-        //    //Directory.CreateDirectory(@"C:\Users\cepRy\Desktop\testDir\sb\bb\utg");
-
-
-        //    var allDirsString = "";
-        //    distinctDirs.ForEach(d =>
-        //    {
-        //        allDirsString += d;
-        //        allDirsString += "asfdgdfdsfgf";
-        //    });
-
-        //    return;
-        //}
     }
 }
