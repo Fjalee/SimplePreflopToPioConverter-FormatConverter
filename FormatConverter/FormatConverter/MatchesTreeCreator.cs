@@ -30,11 +30,50 @@ namespace FormatConverter
             var positionsInUse = GetWhatPositionsAreInUse(turns);
             positionsInUse = CorrectOrderOfPositions(positionsInUse);
 
-            turns = AddStartingFolds(turns, positionsInUse);
-            var treeBranches = CreateTreeBranches(turns);
+            turns = AddMissingFolds(turns, positionsInUse);
 
             return null;
         }
+
+        private List<List<Turn>> AddMissingFolds(List<List<Turn>> turnsBranches, List<PositionEnum> positionsInUse)
+        {
+            var result = new List<List<Turn>>();
+
+            foreach (var branch in turnsBranches)
+            {
+                var currBranch = branch.ToList();
+                var currPositions = positionsInUse.ToList();
+                var currRound = currPositions.ToList();
+                var newBranch = new List<Turn>();
+
+                var spin = 0;
+                while (currBranch.Count != 00)
+                {
+                    if (currRound.Count == 0)
+                    {
+                        currRound = currPositions.ToList();
+                    }
+                    var activePos = currRound.First();
+                    var activeTurn = currBranch.First();
+                    if (activeTurn.Player.Position != activePos)
+                    {
+                        currPositions.Remove(activePos);
+                        newBranch.Add(CreateFoldTurn(activePos));
+                    }
+                    else
+                    {
+                        currBranch.Remove(activeTurn);
+                        newBranch.Add(activeTurn);
+                    }
+                    currRound.RemoveAt(0);
+                }
+
+                result.Add(newBranch);
+            }
+
+            return result;
+        }
+
         private List<List<Turn>> AddStartingFolds(List<List<Turn>> turnsBranches, List<PositionEnum> positionsInUse)
         {
             var result = new List<List<Turn>>();
@@ -85,15 +124,6 @@ namespace FormatConverter
                     result.Add(item.Player.Position);
                 }
             }
-
-            return result;
-        }
-             
-        private List<MatchesTreeNode> CreateTreeBranches(List<List<Turn>> turnBranches)
-        {
-            var result = new List<MatchesTreeNode>();
-
-
 
             return result;
         }
