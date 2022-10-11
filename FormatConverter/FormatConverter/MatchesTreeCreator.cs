@@ -45,12 +45,17 @@ namespace FormatConverter
             {
                 var positionsStillInPlay = positionsInUse.ToList();
                 var roundOrder = positionsStillInPlay.ToList();
-                var availableActionPriority = (int)TurnActionEnum.Call;
-                PositionEnum posInitiatedBiggestRaise = PositionEnum.BB;
-                var checkAvailable = false;
+                var availableActions = GetAvailableActionsAfterMove(TurnActionEnum.Raise, null);
+                var posInitiatedBiggestRaise = PositionEnum.BB;
                 var callAmoount = 1.0;
                 foreach (var t in turns)
                 {
+                    //Person who initiated biggest raise has their move again
+                    if (t.Player.Position == posInitiatedBiggestRaise)
+                    {
+                        availableActions = GetAvailableActionsAfterMove(TurnActionEnum.Check, availableActions);
+                    }
+                    //Checks if raises more than last raise
                     if (t.RaiseAmountInBB != null)
                     {
                         var raiseAmount = Convert.ToDouble(t.RaiseAmountInBB);
@@ -64,47 +69,56 @@ namespace FormatConverter
                         }
                     }
 
+                    //Checks turn order
                     if (t.Player.Position != roundOrder.First())
                     {
                         throw new Exception(t.Player.Position + " moved instead of " + roundOrder.First());
                     }
-                    if ((int)t.Action < availableActionPriority)
+                    //Checks if legal move
+                    if (!availableActions.Contains(t.Action))
                     {
                         throw new Exception("Illegal action " + t.Action);
                     }
+                    //Checks if only Raise and AllIn have RaiseAmount
                     if ((t.Action == TurnActionEnum.Fold || t.Action == TurnActionEnum.Call || t.Action == TurnActionEnum.Check)
                         && !String.IsNullOrEmpty(t.RaiseAmountInBB))
                     {
                         throw new Exception(t.Action + " action can't have raise amount " + t.RaiseAmountInBB);
                     }
+                    //Checks if person initiated Allin doesnt move anymore
                     if (t.Player.Position == posInitiatedBiggestRaise
-                        && availableActionPriority == (int)TurnActionEnum.AllIn)
+                        && !availableActions.Contains(TurnActionEnum.Raise))
                     {
                         throw new Exception("Moved after everyone Folded or AllIn'ed");
                     }
-                    if (!checkAvailable && t.Action == TurnActionEnum.Check)
-                    {
-                        throw new Exception("Illegal check");
-                    }
 
-                    if (t.Player.Position == posInitiatedBiggestRaise || (int)t.Action > availableActionPriority)
-                    {
-                        availableActionPriority = (int)t.Action;
-                        posInitiatedBiggestRaise = t.Player.Position;
-                        if (t.Action == TurnActionEnum.Check)
-                        {
-                            checkAvailable = true;
-                        }
-                    }
-                    if (t.Action == TurnActionEnum.Raise
-                        || t.Action == TurnActionEnum.AllIn && availableActionPriority < (int)TurnActionEnum.AllIn)
-                    {
-                        posInitiatedBiggestRaise = t.Player.Position;
-                        availableActionPriority = (int)t.Action;
-                    }
                     if (t.Action == TurnActionEnum.Fold)
                     {
                         positionsStillInPlay.Remove(t.Player.Position);
+                    }
+                    else
+                    {
+                        //Person who initiated biggest raise has their move again
+                        if (t.Player.Position == posInitiatedBiggestRaise)
+                        {
+                            callAmoount = 1.0;
+                            availableActions = GetAvailableActionsAfterMove(t.Action, availableActions);
+                            posInitiatedBiggestRaise = t.Player.Position;
+                        }
+                        else
+                        {
+                            //If initiates biggest raise
+                            if (t.Action == TurnActionEnum.Raise
+                                || (t.Action == TurnActionEnum.AllIn && availableActions.Contains(TurnActionEnum.Raise)))
+                            {
+                                posInitiatedBiggestRaise = t.Player.Position;
+                                availableActions = GetAvailableActionsAfterMove(t.Action, availableActions);
+                            }
+                        }
+                        if (t.Action == TurnActionEnum.Raise || t.Action == TurnActionEnum.AllIn)
+                        {
+                            callAmoount = Convert.ToDouble(t.RaiseAmountInBB);
+                        }
                     }
 
                     roundOrder.Remove(t.Player.Position);
@@ -114,6 +128,29 @@ namespace FormatConverter
                     }
                 }
             }
+        }
+
+        private List<TurnActionEnum> GetAvailableActionsAfterMove(TurnActionEnum currMove, List<TurnActionEnum> lastAvailableMoves)
+        {
+            if (currMove == TurnActionEnum.Check)
+            {
+                return new List<TurnActionEnum>() { TurnActionEnum.Check, TurnActionEnum.Raise, TurnActionEnum.AllIn, TurnActionEnum.Fold };
+            }
+            if (currMove == TurnActionEnum.AllIn)
+            {
+                return new List<TurnActionEnum>() { TurnActionEnum.Call, TurnActionEnum.Fold };
+            }
+            if (currMove == TurnActionEnum.Raise)
+            {
+                return new List<TurnActionEnum>() { TurnActionEnum.Call, TurnActionEnum.Raise, TurnActionEnum.AllIn, TurnActionEnum.Fold };
+            }
+
+            if(lastAvailableMoves == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            return lastAvailableMoves;
         }
 
         private void ThrowIfPlayerMovesAfterFold(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
