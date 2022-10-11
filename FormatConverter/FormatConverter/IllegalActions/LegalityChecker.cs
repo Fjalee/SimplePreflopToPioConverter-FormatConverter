@@ -26,42 +26,8 @@ namespace FormatConverter.IllegalActions
                     {
                         availableActions = GetAvailableActionsAfterMove(TurnActionEnum.Check, availableActions);
                     }
-                    //Checks if raises more than last raise
-                    if (t.RaiseAmountInBB != null)
-                    {
-                        var raiseAmount = Convert.ToDouble(t.RaiseAmountInBB);
-                        if (raiseAmount == 0)
-                        {
-                            throw new Exception("Couldn't convert raise amount string to double");
-                        }
-                        if (t.Action == TurnActionEnum.Raise && raiseAmount <= callAmoount)
-                        {
-                            throw new Exception("Illegal action " + t.Action);
-                        }
-                    }
 
-                    //Checks turn order
-                    if (t.Player.Position != roundOrder.First())
-                    {
-                        throw new Exception(t.Player.Position + " moved instead of " + roundOrder.First());
-                    }
-                    //Checks if legal move
-                    if (!availableActions.Contains(t.Action))
-                    {
-                        throw new Exception("Illegal action " + t.Action);
-                    }
-                    //Checks if only Raise and AllIn have RaiseAmount
-                    if ((t.Action == TurnActionEnum.Fold || t.Action == TurnActionEnum.Call || t.Action == TurnActionEnum.Check)
-                        && !String.IsNullOrEmpty(t.RaiseAmountInBB))
-                    {
-                        throw new Exception(t.Action + " action can't have raise amount " + t.RaiseAmountInBB);
-                    }
-                    //Checks if person initiated Allin doesnt move anymore
-                    if (t.Player.Position == posInitiatedBiggestRaise
-                        && !availableActions.Contains(TurnActionEnum.Raise))
-                    {
-                        throw new Exception("Moved after everyone Folded or AllIn'ed");
-                    }
+                    ThrowIfIllegalMove(roundOrder, availableActions, t, posInitiatedBiggestRaise, callAmoount);
 
                     if (t.Action == TurnActionEnum.Fold)
                     {
@@ -99,6 +65,47 @@ namespace FormatConverter.IllegalActions
                     }
                 }
             }
+        }
+
+        private void ThrowIfIllegalMove(List<PositionEnum> roundOrder, List<TurnActionEnum> availableActions, Turn t, PositionEnum posInitiatedBiggestRaise, double callAmoount)
+        {
+            //Checks turn order
+            if (t.Player.Position != roundOrder.First())
+            {
+                throw new Exception(t.Player.Position + " moved instead of " + roundOrder.First());
+            }
+            //Checks if legal move
+            if (!availableActions.Contains(t.Action))
+            {
+                throw new Exception("Illegal action " + t.Action);
+            }
+            //Checks if person initiated Allin doesnt move anymore
+            if (t.Player.Position == posInitiatedBiggestRaise
+                && !availableActions.Contains(TurnActionEnum.Raise))
+            {
+                throw new Exception("Moved after everyone Folded or AllIn'ed");
+            }
+            //Checks if raises more than last raise
+            if (t.Action == TurnActionEnum.Raise && GetTurnRaise(t) <= callAmoount)
+            {
+                throw new Exception("Illegal action " + t.Action);
+            }
+            //Checks if only Raise and AllIn have RaiseAmount
+            if ((t.Action == TurnActionEnum.Fold || t.Action == TurnActionEnum.Call || t.Action == TurnActionEnum.Check)
+                && !String.IsNullOrEmpty(t.RaiseAmountInBB))
+            {
+                throw new Exception(t.Action + " action can't have raise amount " + t.RaiseAmountInBB);
+            }
+        }
+
+        private double GetTurnRaise(Turn t)
+        {
+            var raiseAmount = Convert.ToDouble(t.RaiseAmountInBB);
+            if (raiseAmount == 0)
+            {
+                throw new Exception("Couldn't convert raise amount string to double");
+            }
+            return raiseAmount;
         }
 
         private List<TurnActionEnum> GetAvailableActionsAfterMove(TurnActionEnum currMove, List<TurnActionEnum> lastAvailableMoves)
