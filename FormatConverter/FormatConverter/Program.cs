@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FormatConverter.IllegalActions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -62,7 +63,8 @@ namespace FormatConverter
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
             services
-                .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>();
+                .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>()
+                .AddTransient<ILegalityChecker, LegalityChecker>();
         }
 
         private static IConfiguration SetupConfiguration()
