@@ -64,7 +64,7 @@ namespace FormatConverter
 
             services
                 .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>()
-                .AddTransient<ILegalityChecker, LegalityChecker>();
+                .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>();
         }
 
         private static IConfiguration SetupConfiguration()

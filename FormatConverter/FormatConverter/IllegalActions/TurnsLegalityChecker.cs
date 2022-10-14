@@ -2,9 +2,9 @@
 
 namespace FormatConverter.IllegalActions
 {
-    public class LegalityChecker : ILegalityChecker
+    public class TurnsLegalityChecker : ITurnsLegalityChecker
     {
-        public LegalityChecker()
+        public TurnsLegalityChecker()
         {
 
         }

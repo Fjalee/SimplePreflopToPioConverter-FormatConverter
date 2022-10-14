@@ -13,14 +13,14 @@ namespace FormatConverter
     {
         private readonly ILogger<MatchesTreeCreator> _logger;
         private readonly AppSettingsOptions _config;
-        private readonly ILegalityChecker _legalityChecker;
+        private readonly ITurnsLegalityChecker _turnsLegalityChecker;
 
         public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOptions<AppSettingsOptions> configOptions,
-            ILegalityChecker legalityChecker)
+            ITurnsLegalityChecker turnsLegalityChecker)
         {
             _logger = logger;
             _config = configOptions.Value;
-            _legalityChecker = legalityChecker;
+            _turnsLegalityChecker = turnsLegalityChecker;
         }
 
         public MatchesTree Create(string inputDir)
@@ -36,9 +36,9 @@ namespace FormatConverter
 
             turnsBranches = AddMissingFolds(turnsBranches, positionsInUse);
 
-            _legalityChecker.ThrowIfAnyPositionWasSkippedInTurn(turnsBranches, positionsInUse);
-            _legalityChecker.ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
-            _legalityChecker.ThrowIfIllegalMove(turnsBranches, positionsInUse);
+            _turnsLegalityChecker.ThrowIfAnyPositionWasSkippedInTurn(turnsBranches, positionsInUse);
+            _turnsLegalityChecker.ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
+            _turnsLegalityChecker.ThrowIfIllegalMove(turnsBranches, positionsInUse);
 
             var result = CreateMatchesTree(turnsBranches);
 

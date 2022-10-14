@@ -2,7 +2,7 @@
 
 namespace FormatConverter.IllegalActions
 {
-    public interface ILegalityChecker
+    public interface ITurnsLegalityChecker
     {
         public void ThrowIfAnyPositionWasSkippedInTurn(List<List<Turn>> branches, List<PositionEnum> positionsInUse);
         public void ThrowIfPlayerMovesAfterFold(List<List<Turn>> branches, List<PositionEnum> positionsInUse);
