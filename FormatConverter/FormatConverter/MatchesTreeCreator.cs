@@ -23,7 +23,7 @@ namespace FormatConverter
             _turnsLegalityChecker = turnsLegalityChecker;
         }
 
-        public MatchesTree Create(string inputDir)
+        public MatchesTreeNode Create(string inputDir)
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
 
@@ -45,19 +45,19 @@ namespace FormatConverter
             return result;
         }
 
-        private MatchesTree CreateMatchesTree(List<List<Turn>> turnsBranches)
+        private MatchesTreeNode CreateMatchesTree(List<List<Turn>> turnsBranches)
         {
-            var results = new List<MatchesTreeNode>();
+            var results = new MatchesTreeNode(null);
             foreach (var turns in turnsBranches)
             {
-                var parentNode = FindOrCreateParentNode(turns.First(), results);
+                var parentNode = FindOrCreateParentNode(turns.First(), results.ChildNodes);
                 foreach (var t in turns.Skip(1))
                 {
                     parentNode = FindOrCreateParentNode(t, parentNode.ChildNodes);
                 }
             }
 
-            return new MatchesTree(results);
+            return results;
         }
 
         private MatchesTreeNode FindOrCreateParentNode(Turn currTurn, List<MatchesTreeNode> parentNodes)

@@ -4,6 +4,6 @@ namespace FormatConverter
 {
     public interface IMatchesTreeCreator
     {
-        public MatchesTree Create(string inputDir);
+        public MatchesTreeNode Create(string inputDir);
     }
 }
