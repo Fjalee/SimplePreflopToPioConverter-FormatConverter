@@ -47,36 +47,35 @@ namespace FormatConverter
 
         private MatchesTree CreateMatchesTree(List<List<Turn>> turnsBranches)
         {
-            var parentNodes = new List<MatchesTreeNode>();
+            var results = new List<MatchesTreeNode>();
             foreach (var turns in turnsBranches)
             {
-                var parentNode = FindOrCreateParentNode(turns, parentNodes);
-                foreach (var t in turns)
+                var parentNode = FindOrCreateParentNode(turns.First(), results);
+                foreach (var t in turns.Skip(1))
                 {
-
+                    parentNode = FindOrCreateParentNode(t, parentNode.ChildNodes);
                 }
             }
 
-            return new MatchesTree(parentNodes);
+            return new MatchesTree(results);
         }
 
-        private MatchesTreeNode FindOrCreateParentNode(List<Turn> currBranch, List<MatchesTreeNode> parentNodes)
+        private MatchesTreeNode FindOrCreateParentNode(Turn currTurn, List<MatchesTreeNode> parentNodes)
         {
-            var parentTurn = currBranch.First();
-            var result = parentNodes.SingleOrDefault(b => b.Turn.Player.Position == parentTurn.Player.Position);
+            var result = parentNodes.Where(b => b.Turn.Player.Position == currTurn.Player.Position)
+                .SingleOrDefault(b => b.Turn.Action == currTurn.Action);
+
             if (result == null
-                || result.Turn.Action != parentTurn.Action)
+                || result.Turn.Action != currTurn.Action)
             {
-                result = new MatchesTreeNode(parentTurn);
+                result = new MatchesTreeNode(currTurn);
                 parentNodes.Add(result);
             }
-            if (result.Turn.Action == parentTurn.Action)
+            if (result.Turn.RaiseAmountInBB != currTurn.RaiseAmountInBB)
             {
-                if (result.Turn.RaiseAmountInBB != parentTurn.RaiseAmountInBB)
-                {
-                    throw new Exception("Same node but bb amounts are different");
-                }
+                throw new Exception("Same node but bb amounts are different");
             }
+
             return result;
         }
 
