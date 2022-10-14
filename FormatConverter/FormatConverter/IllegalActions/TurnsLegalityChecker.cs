@@ -4,9 +4,11 @@ namespace FormatConverter.IllegalActions
 {
     public class TurnsLegalityChecker : ITurnsLegalityChecker
     {
-        public TurnsLegalityChecker()
-        {
+        private readonly ILegalityChecker _legalityChecker;
 
+        public TurnsLegalityChecker(ILegalityChecker legalityChecker)
+        {
+            _legalityChecker = legalityChecker;
         }
 
         public void ThrowIfIllegalMove(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
@@ -15,7 +17,7 @@ namespace FormatConverter.IllegalActions
             {
                 var positionsStillInPlay = positionsInUse.ToList();
                 var roundOrder = positionsStillInPlay.ToList();
-                var availableActions = GetAvailableActionsAfterMove(TurnActionEnum.Raise, null);
+                var availableActions = _legalityChecker.GetAvailableActionsAfterMove(TurnActionEnum.Raise, null);
                 var posInitiatedBiggestRaise = PositionEnum.BB;
                 var callAmoount = 1.0;
 
@@ -24,10 +26,10 @@ namespace FormatConverter.IllegalActions
                     //Person who initiated biggest raise has their move again
                     if (t.Player.Position == posInitiatedBiggestRaise)
                     {
-                        availableActions = GetAvailableActionsAfterMove(TurnActionEnum.Check, availableActions);
+                        availableActions = _legalityChecker.GetAvailableActionsAfterMove(TurnActionEnum.Check, availableActions);
                     }
 
-                    ThrowIfIllegalMove(roundOrder, availableActions, t, posInitiatedBiggestRaise, callAmoount);
+                    _legalityChecker.ThrowIfIllegalMove(roundOrder, availableActions, t, posInitiatedBiggestRaise, callAmoount);
 
                     if (t.Action == TurnActionEnum.Fold)
                     {
@@ -39,7 +41,7 @@ namespace FormatConverter.IllegalActions
                         if (t.Player.Position == posInitiatedBiggestRaise)
                         {
                             callAmoount = 1.0;
-                            availableActions = GetAvailableActionsAfterMove(t.Action, availableActions);
+                            availableActions = _legalityChecker.GetAvailableActionsAfterMove(t.Action, availableActions);
                             posInitiatedBiggestRaise = t.Player.Position;
                         }
                         else
@@ -49,7 +51,7 @@ namespace FormatConverter.IllegalActions
                                 || (t.Action == TurnActionEnum.AllIn && availableActions.Contains(TurnActionEnum.Raise)))
                             {
                                 posInitiatedBiggestRaise = t.Player.Position;
-                                availableActions = GetAvailableActionsAfterMove(t.Action, availableActions);
+                                availableActions = _legalityChecker.GetAvailableActionsAfterMove(t.Action, availableActions);
                             }
                         }
                         if (t.Action == TurnActionEnum.Raise || t.Action == TurnActionEnum.AllIn)
@@ -67,70 +69,7 @@ namespace FormatConverter.IllegalActions
             }
         }
 
-        private void ThrowIfIllegalMove(List<PositionEnum> roundOrder, List<TurnActionEnum> availableActions, Turn t, PositionEnum posInitiatedBiggestRaise, double callAmoount)
-        {
-            //Checks turn order
-            if (t.Player.Position != roundOrder.First())
-            {
-                throw new Exception(t.Player.Position + " moved instead of " + roundOrder.First());
-            }
-            //Checks if legal move
-            if (!availableActions.Contains(t.Action))
-            {
-                throw new Exception("Illegal action " + t.Action);
-            }
-            //Checks if person initiated Allin doesnt move anymore
-            if (t.Player.Position == posInitiatedBiggestRaise
-                && !availableActions.Contains(TurnActionEnum.Raise))
-            {
-                throw new Exception("Moved after everyone Folded or AllIn'ed");
-            }
-            //Checks if raises more than last raise
-            if (t.Action == TurnActionEnum.Raise && GetTurnRaise(t) <= callAmoount)
-            {
-                throw new Exception("Illegal action " + t.Action);
-            }
-            //Checks if only Raise and AllIn have RaiseAmount
-            if ((t.Action == TurnActionEnum.Fold || t.Action == TurnActionEnum.Call || t.Action == TurnActionEnum.Check)
-                && !String.IsNullOrEmpty(t.RaiseAmountInBB))
-            {
-                throw new Exception(t.Action + " action can't have raise amount " + t.RaiseAmountInBB);
-            }
-        }
-
-        private double GetTurnRaise(Turn t)
-        {
-            var raiseAmount = Convert.ToDouble(t.RaiseAmountInBB);
-            if (raiseAmount == 0)
-            {
-                throw new Exception("Couldn't convert raise amount string to double");
-            }
-            return raiseAmount;
-        }
-
-        private List<TurnActionEnum> GetAvailableActionsAfterMove(TurnActionEnum currMove, List<TurnActionEnum> lastAvailableMoves)
-        {
-            if (currMove == TurnActionEnum.Check)
-            {
-                return new List<TurnActionEnum>() { TurnActionEnum.Check, TurnActionEnum.Raise, TurnActionEnum.AllIn, TurnActionEnum.Fold };
-            }
-            if (currMove == TurnActionEnum.AllIn)
-            {
-                return new List<TurnActionEnum>() { TurnActionEnum.Call, TurnActionEnum.Fold };
-            }
-            if (currMove == TurnActionEnum.Raise)
-            {
-                return new List<TurnActionEnum>() { TurnActionEnum.Call, TurnActionEnum.Raise, TurnActionEnum.AllIn, TurnActionEnum.Fold };
-            }
-
-            if (lastAvailableMoves == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            return lastAvailableMoves;
-        }
-
+        //Legacy
         public void ThrowIfPlayerMovesAfterFold(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
         {
             foreach (var turns in branches)
@@ -153,6 +92,7 @@ namespace FormatConverter.IllegalActions
             }
         }
 
+        //Legacy
         public void ThrowIfAnyPositionWasSkippedInTurn(List<List<Turn>> branches, List<PositionEnum> positionsInUse)
         {
             foreach (var turns in branches)

@@ -1,4 +1,5 @@
-﻿using FormatConverter.IllegalActions;
+﻿using FormatConverter.Helpers;
+using FormatConverter.IllegalActions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -64,7 +65,10 @@ namespace FormatConverter
 
             services
                 .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>()
-                .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>();
+                .AddTransient<ILegalityChecker, LegalityChecker>()
+                .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>()
+                .AddTransient<IMatchesTreeLegalityChecker, MatchesTreeLegalityChecker>()
+                .AddTransient<ITurnHelper, TurnHelper>();
         }
 
         private static IConfiguration SetupConfiguration()
