@@ -40,7 +40,44 @@ namespace FormatConverter
             _legalityChecker.ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
             _legalityChecker.ThrowIfIllegalMove(turnsBranches, positionsInUse);
 
+            var t = CreateMatchesTree(turnsBranches);
+
             return null;
+        }
+
+        private MatchesTree CreateMatchesTree(List<List<Turn>> turnsBranches)
+        {
+            var parentNodes = new List<MatchesTreeNode>();
+            foreach (var turns in turnsBranches)
+            {
+                var parentNode = FindOrCreateParentNode(turns, parentNodes);
+                foreach (var t in turns)
+                {
+
+                }
+            }
+
+            return new MatchesTree(parentNodes);
+        }
+
+        private MatchesTreeNode FindOrCreateParentNode(List<Turn> currBranch, List<MatchesTreeNode> parentNodes)
+        {
+            var parentTurn = currBranch.First();
+            var result = parentNodes.SingleOrDefault(b => b.Turn.Player.Position == parentTurn.Player.Position);
+            if (result == null
+                || result.Turn.Action != parentTurn.Action)
+            {
+                result = new MatchesTreeNode(parentTurn);
+                parentNodes.Add(result);
+            }
+            if (result.Turn.Action == parentTurn.Action)
+            {
+                if (result.Turn.RaiseAmountInBB != parentTurn.RaiseAmountInBB)
+                {
+                    throw new Exception("Same node but bb amounts are different");
+                }
+            }
+            return result;
         }
 
         private List<List<Turn>> AddMissingFolds(List<List<Turn>> turnsBranches, List<PositionEnum> positionsInUse)

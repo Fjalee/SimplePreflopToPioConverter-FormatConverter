@@ -2,11 +2,11 @@
 {
     public class MatchesTree
     {
-        public List<MatchesTreeNode> PossibleTurns { get; set; }
+        public List<MatchesTreeNode> Nodes { get; set; }
 
-        public MatchesTree(List<MatchesTreeNode> possibleTurns)
+        public MatchesTree(List<MatchesTreeNode> nodes)
         {
-            PossibleTurns = possibleTurns;
+            Nodes = nodes;
         }
     }
 }
