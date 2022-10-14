@@ -40,9 +40,9 @@ namespace FormatConverter
             _legalityChecker.ThrowIfPlayerMovesAfterFold(turnsBranches, positionsInUse);
             _legalityChecker.ThrowIfIllegalMove(turnsBranches, positionsInUse);
 
-            var t = CreateMatchesTree(turnsBranches);
+            var result = CreateMatchesTree(turnsBranches);
 
-            return null;
+            return result;
         }
 
         private MatchesTree CreateMatchesTree(List<List<Turn>> turnsBranches)
