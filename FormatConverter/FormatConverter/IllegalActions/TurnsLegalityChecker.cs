@@ -19,7 +19,7 @@ namespace FormatConverter.IllegalActions
                 var roundOrder = positionsStillInPlay.ToList();
                 var availableActions = _legalityChecker.GetAvailableActionsAfterMove(TurnActionEnum.Raise, null);
                 var posInitiatedBiggestRaise = PositionEnum.BB;
-                var callAmoount = 1.0;
+                var callAmount = 1.0;
 
                 foreach (var t in turns)
                 {
@@ -29,7 +29,7 @@ namespace FormatConverter.IllegalActions
                         availableActions = _legalityChecker.GetAvailableActionsAfterMove(TurnActionEnum.Check, availableActions);
                     }
 
-                    _legalityChecker.ThrowIfIllegalMove(roundOrder, availableActions, t, posInitiatedBiggestRaise, callAmoount);
+                    _legalityChecker.ThrowIfIllegalMove(roundOrder, availableActions, t, posInitiatedBiggestRaise, callAmount);
 
                     if (t.Action == TurnActionEnum.Fold)
                     {
@@ -40,7 +40,7 @@ namespace FormatConverter.IllegalActions
                         //Person who initiated biggest raise has their move again
                         if (t.Player.Position == posInitiatedBiggestRaise)
                         {
-                            callAmoount = 1.0;
+                            callAmount = 1.0;
                             availableActions = _legalityChecker.GetAvailableActionsAfterMove(t.Action, availableActions);
                             posInitiatedBiggestRaise = t.Player.Position;
                         }
@@ -56,7 +56,7 @@ namespace FormatConverter.IllegalActions
                         }
                         if (t.Action == TurnActionEnum.Raise || t.Action == TurnActionEnum.AllIn)
                         {
-                            callAmoount = Convert.ToDouble(t.RaiseAmountInBB);
+                            callAmount = Convert.ToDouble(t.RaiseAmountInBB);
                         }
                     }
 
