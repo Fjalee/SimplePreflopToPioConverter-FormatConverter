@@ -19,5 +19,14 @@ namespace FormatConverter.IllegalActions
             PosInitiatedBiggestRaise = posInitiatedBiggestRaise;
             CallAmount = callAmount;
         }
+
+        public MatchState(MatchState state)
+        {
+            PositionsStillInPlay = state.PositionsStillInPlay;
+            RoundOrder = state.RoundOrder;
+            AvailableActions = state.AvailableActions;
+            PosInitiatedBiggestRaise = state.PosInitiatedBiggestRaise;
+            CallAmount = state.CallAmount;
+        }
     }
 }
