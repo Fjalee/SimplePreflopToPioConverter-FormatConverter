@@ -12,6 +12,54 @@ namespace FormatConverter.IllegalActions
             _turnsHelper = turnsHelper;
         }
 
+        //Checks if moevs legal
+        //Changes state for the next turn
+        public void SimulateATurn(MatchState currState, Turn currTurn)
+        {
+            //Person who initiated biggest raise has their move again
+            if (currTurn.Player.Position == currState.PosInitiatedBiggestRaise)
+            {
+                currState.AvailableActions = GetAvailableActionsAfterMove(TurnActionEnum.Check, currState.AvailableActions);
+            }
+
+            ThrowIfIllegalMove(currState.RoundOrder, currState.AvailableActions, currTurn, currState.PosInitiatedBiggestRaise, currState.CallAmount);
+
+            if (currTurn.Action == TurnActionEnum.Fold)
+            {
+                currState.PositionsStillInPlay.Remove(currTurn.Player.Position);
+            }
+            else
+            {
+                //Person who initiated biggest raise has their move again
+                if (currTurn.Player.Position == currState.PosInitiatedBiggestRaise)
+                {
+                    currState.CallAmount = 1.0;
+                    currState.AvailableActions = GetAvailableActionsAfterMove(currTurn.Action, currState.AvailableActions);
+                    currState.PosInitiatedBiggestRaise = currTurn.Player.Position;
+                }
+                else
+                {
+                    //If initiates biggest raise
+                    if (currTurn.Action == TurnActionEnum.Raise
+                        || (currTurn.Action == TurnActionEnum.AllIn && currState.AvailableActions.Contains(TurnActionEnum.Raise)))
+                    {
+                        currState.PosInitiatedBiggestRaise = currTurn.Player.Position;
+                        currState.AvailableActions = GetAvailableActionsAfterMove(currTurn.Action, currState.AvailableActions);
+                    }
+                }
+                if (currTurn.Action == TurnActionEnum.Raise || currTurn.Action == TurnActionEnum.AllIn)
+                {
+                    currState.CallAmount = Convert.ToDouble(currTurn.RaiseAmountInBB);
+                }
+            }
+
+            currState.RoundOrder.Remove(currTurn.Player.Position);
+            if (currState.RoundOrder.Count == 0)
+            {
+                currState.RoundOrder = currState.PositionsStillInPlay.ToList();
+            }
+        }
+
         public void ThrowIfIllegalMove(List<PositionEnum> roundOrder, List<TurnActionEnum> availableActions, Turn t, PositionEnum posInitiatedBiggestRaise, double callAmoount)
         {
             //Checks turn order
