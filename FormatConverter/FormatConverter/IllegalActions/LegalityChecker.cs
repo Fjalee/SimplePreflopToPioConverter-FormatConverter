@@ -53,6 +53,12 @@ namespace FormatConverter.IllegalActions
                 }
             }
 
+            if (currTurn.Action == TurnActionEnum.AllIn
+                || TurnActionEnumHelper.OnlyContainsFoldAndCheck(currState.AvailableActions))
+            {
+                currState.PositionsStillInPlay.Remove(currTurn.Player.Position);
+            }
+
             currState.RoundOrder.Remove(currTurn.Player.Position);
             if (currState.RoundOrder.Count == 0)
             {
