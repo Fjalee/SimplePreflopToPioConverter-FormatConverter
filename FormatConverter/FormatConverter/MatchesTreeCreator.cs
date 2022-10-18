@@ -8,19 +8,21 @@ using System.Text.RegularExpressions;
 using FormatConverter.IllegalActions;
 
 namespace FormatConverter
-{
+{ 
     public class MatchesTreeCreator : IMatchesTreeCreator
     {
         private readonly ILogger<MatchesTreeCreator> _logger;
         private readonly AppSettingsOptions _config;
         private readonly ITurnsLegalityChecker _turnsLegalityChecker;
+        private readonly IMatchesTreeLegalityChecker _matchesTreeLegalityChecker;
 
         public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOptions<AppSettingsOptions> configOptions,
-            ITurnsLegalityChecker turnsLegalityChecker)
+            ITurnsLegalityChecker turnsLegalityChecker, IMatchesTreeLegalityChecker matchesTreeLegalityChecker)
         {
             _logger = logger;
             _config = configOptions.Value;
             _turnsLegalityChecker = turnsLegalityChecker;
+            _matchesTreeLegalityChecker = matchesTreeLegalityChecker;
         }
 
         public MatchesTreeNode Create(string inputDir)
@@ -41,6 +43,8 @@ namespace FormatConverter
             _turnsLegalityChecker.ThrowIfIllegalMove(turnsBranches, positionsInUse);
 
             var result = CreateMatchesTree(turnsBranches);
+
+            _matchesTreeLegalityChecker.ThrowIfIllegalMove(result, positionsInUse);
 
             return result;
         }
