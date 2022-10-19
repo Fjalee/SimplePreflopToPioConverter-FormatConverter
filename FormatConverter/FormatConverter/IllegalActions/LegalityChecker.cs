@@ -64,6 +64,7 @@ namespace FormatConverter.IllegalActions
             {
                 currState.RoundOrder = currState.PositionsStillInPlay.ToList();
             }
+            currState.TurnsDone++;
         }
 
         public void ThrowIfIllegalMove(List<PositionEnum> roundOrder, List<TurnActionEnum> availableActions, Turn t, PositionEnum posInitiatedBiggestRaise, double callAmoount)

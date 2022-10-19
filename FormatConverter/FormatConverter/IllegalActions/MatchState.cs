@@ -9,15 +9,17 @@ namespace FormatConverter.IllegalActions
         public List<TurnActionEnum> AvailableActions { get; set; }
         public PositionEnum PosInitiatedBiggestRaise { get; set; }
         public double CallAmount { get; set; }
+        public int TurnsDone { get; set; }
 
         public MatchState(List<PositionEnum> roundOrder, List<TurnActionEnum> availableActions,
-            PositionEnum posInitiatedBiggestRaise, double callAmount, List<PositionEnum> positionsStillInPlay)
+            PositionEnum posInitiatedBiggestRaise, double callAmount, List<PositionEnum> positionsStillInPlay, int turnsDone=0)
         {
             PositionsStillInPlay = positionsStillInPlay;
             RoundOrder = roundOrder;
             AvailableActions = availableActions;
             PosInitiatedBiggestRaise = posInitiatedBiggestRaise;
             CallAmount = callAmount;
+            TurnsDone = turnsDone;
         }
 
         public MatchState(MatchState state)
@@ -27,6 +29,7 @@ namespace FormatConverter.IllegalActions
             AvailableActions = state.AvailableActions;
             PosInitiatedBiggestRaise = state.PosInitiatedBiggestRaise;
             CallAmount = state.CallAmount;
+            TurnsDone = state.TurnsDone;
         }
     }
 }
