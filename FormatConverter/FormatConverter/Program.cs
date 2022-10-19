@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FormatConverter.Helpers;
+using FormatConverter.IllegalActions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,6 +12,11 @@ namespace FormatConverter
     public class Program
     {
         private static ILogger<Program>? _logger;
+        private static AppSettingsOptions _config;
+
+        public static PositionsMetaData InputPositionsMetaData { get; private set; }
+        public static PositionsMetaData OutputPositionsMetaData { get; private set; }
+        public static List<PositionEnum> PositionsOrder { get; set; } = new List<PositionEnum>() { PositionEnum.UTG, PositionEnum.MP1, PositionEnum.MP2, PositionEnum.MP3, PositionEnum.HIJ, PositionEnum.CO, PositionEnum.BTN, PositionEnum.SB, PositionEnum.BB };
 
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
@@ -26,9 +33,14 @@ namespace FormatConverter
             var serviceProvider = services.BuildServiceProvider();
 
             _logger = serviceProvider.GetService<ILogger<Program>>();
+            _config = serviceProvider.GetService<IOptions<AppSettingsOptions>>().Value;
 
-            //var config = serviceProvider.GetService<IOptions<AppSettingsOptions>>()?.Value;       //delete this line (its from template)
-            //var testValFromConfig = config?.TestObject?.TestValue;     //delete this line (its from template)
+            InputPositionsMetaData = new PositionsMetaData(_config.InputPatterns.PositionNames.SBName, _config.InputPatterns.PositionNames.BBName, _config.InputPatterns.PositionNames.UTGName, _config.InputPatterns.PositionNames.MP1Name, _config.InputPatterns.PositionNames.MP2Name, _config.InputPatterns.PositionNames.MP3Name, _config.InputPatterns.PositionNames.HIJName, _config.InputPatterns.PositionNames.COName, _config.InputPatterns.PositionNames.BTNName);
+            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPatterns.PositionNames.SBName, _config.OutputPatterns.PositionNames.BBName, _config.OutputPatterns.PositionNames.UTGName, _config.OutputPatterns.PositionNames.MP1Name, _config.OutputPatterns.PositionNames.MP2Name, _config.OutputPatterns.PositionNames.MP3Name, _config.OutputPatterns.PositionNames.HIJName, _config.OutputPatterns.PositionNames.COName, _config.OutputPatterns.PositionNames.BTNName);
+
+            var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
+            matchesTreeCreator.Create(_config.InputDir);
+
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -39,8 +51,10 @@ namespace FormatConverter
                 .AddAutoMapper(typeof(Program))
                 .Configure<AppSettingsOptions>(
                     config.GetSection("AppSettings"))
-                .Configure<TestObjectOptions>(
-                    config.GetSection("TestObject"));
+                .Configure<OutputPositionNamesOptions>(
+                    config.GetSection("AppSettings").GetSection("OutputPatterns.OutputPositionNames"))
+                .Configure<InputPositionNamesOptions>(
+                    config.GetSection("AppSettings").GetSection("InputPatterns.InputPositionNames"));
 
             services.AddLogging(builder =>
             {
@@ -49,8 +63,12 @@ namespace FormatConverter
             });
             LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
 
-            //services
-            //.AddTransient<IExampleClass, ExampleClass>();             //delete this line (its from template) 
+            services
+                .AddTransient<IMatchesTreeCreator, MatchesTreeCreator>()
+                .AddTransient<ILegalityChecker, LegalityChecker>()
+                .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>()
+                .AddTransient<IMatchesTreeLegalityChecker, MatchesTreeLegalityChecker>()
+                .AddTransient<ITurnHelper, TurnHelper>();
         }
 
         private static IConfiguration SetupConfiguration()
