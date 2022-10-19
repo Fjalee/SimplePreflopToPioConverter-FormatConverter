@@ -24,9 +24,9 @@ namespace FormatConverter.IllegalActions
 
         public MatchState(MatchState state)
         {
-            PositionsStillInPlay = state.PositionsStillInPlay;
-            RoundOrder = state.RoundOrder;
-            AvailableActions = state.AvailableActions;
+            PositionsStillInPlay = state.PositionsStillInPlay.ToList();
+            RoundOrder = state.RoundOrder.ToList();
+            AvailableActions = state.AvailableActions.ToList();
             PosInitiatedBiggestRaise = state.PosInitiatedBiggestRaise;
             CallAmount = state.CallAmount;
             TurnsDone = state.TurnsDone;
