@@ -78,9 +78,18 @@ namespace FormatConverter
                 result = new MatchesTreeNode(currTurn);
                 parentNodes.Add(result);
             }
+            if (String.IsNullOrEmpty(result.Turn.Strategy))
+            {
+                result.Turn.Strategy = currTurn.Strategy;
+            }
             if (result.Turn.RaiseAmountInBB != currTurn.RaiseAmountInBB)
             {
                 throw new Exception("Same node but bb amounts are different");
+            }
+            if (result.Turn.Strategy != currTurn.Strategy
+                && !String.IsNullOrEmpty(currTurn.Strategy))
+            {
+                throw new Exception("Same node but strategies are different");
             }
 
             return result;
