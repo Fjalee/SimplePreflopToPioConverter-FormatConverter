@@ -1,8 +1,8 @@
 ﻿namespace FormatConverter.Output
 {
-    public class DirectoryHelper
+    public static class DirectoryHelper
     {
-        public void CreateDirThrowIfExists(string path)
+        public static void CreateDirThrowIfExists(string path)
         {
             if (Directory.Exists(path))
             {
