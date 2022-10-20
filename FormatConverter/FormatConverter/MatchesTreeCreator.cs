@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using FormatConverter.IllegalActions;
+using FormatConverter.ValidtyCheckers;
 
 namespace FormatConverter
 { 
@@ -15,22 +16,24 @@ namespace FormatConverter
         private readonly AppSettingsOptions _config;
         private readonly ITurnsLegalityChecker _turnsLegalityChecker;
         private readonly IMatchesTreeLegalityChecker _matchesTreeLegalityChecker;
+        private readonly IC2StrategyValidityChecker _c2StrategyValidityChecker;
 
         public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOptions<AppSettingsOptions> configOptions,
-            ITurnsLegalityChecker turnsLegalityChecker, IMatchesTreeLegalityChecker matchesTreeLegalityChecker)
+            ITurnsLegalityChecker turnsLegalityChecker, IMatchesTreeLegalityChecker matchesTreeLegalityChecker,
+            IC2StrategyValidityChecker c2StrategyValidityChecker)
         {
             _logger = logger;
             _config = configOptions.Value;
             _turnsLegalityChecker = turnsLegalityChecker;
             _matchesTreeLegalityChecker = matchesTreeLegalityChecker;
+            _c2StrategyValidityChecker = c2StrategyValidityChecker;
         }
 
         public MatchesTreeNode Create(string inputDir)
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
 
-            var childFiles = ParseFileNamesFromDirs(childDirs);
-            var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
+            var playersAndActions = ParsePlayerAndActionFromFileNames(childDirs);
             var turnsBranches = CreateTurnsFromActionPairs(playersAndActions);
 
             var positionsInUse = GetWhatPositionsAreInUse(turnsBranches);
@@ -75,9 +78,18 @@ namespace FormatConverter
                 result = new MatchesTreeNode(currTurn);
                 parentNodes.Add(result);
             }
+            if (String.IsNullOrEmpty(result.Turn.Strategy))
+            {
+                result.Turn.Strategy = currTurn.Strategy;
+            }
             if (result.Turn.RaiseAmountInBB != currTurn.RaiseAmountInBB)
             {
                 throw new Exception("Same node but bb amounts are different");
+            }
+            if (result.Turn.Strategy != currTurn.Strategy
+                && !String.IsNullOrEmpty(currTurn.Strategy))
+            {
+                throw new Exception("Same node but strategies are different");
             }
 
             return result;
@@ -179,15 +191,15 @@ namespace FormatConverter
             return result;
         }
 
-        private List<List<Turn>> CreateTurnsFromActionPairs(List<List<PlayerAndActionStringPair>> pairsStrings)
+        private List<List<Turn>> CreateTurnsFromActionPairs(List<TurnBranchInPairs> pairsList)
         {
             var result = new List<List<Turn>>();
 
-            foreach (var pairs in pairsStrings)
+            foreach (var pairs in pairsList)
             {
                 var turns = new List<Turn>();
 
-                foreach (var p in pairs)
+                foreach (var p in pairs.Pairs)
                 {
                     var player = InputPositionsMetaData.GetPlayer(p.Player);
 
@@ -201,6 +213,8 @@ namespace FormatConverter
                     turns.Add(turn);
                 }
 
+
+                turns.Last().Strategy = pairs.Strategy;
                 result.Add(turns);
             }
 
@@ -244,27 +258,31 @@ namespace FormatConverter
             throw new InvalidDataException("Could now parse action \"" + action + "\"");
         }
 
-        private List<List<PlayerAndActionStringPair>> ParsePlayerAndActionFromFileNames(List<string> fileNames)
+        private List<TurnBranchInPairs> ParsePlayerAndActionFromFileNames(List<string> dirs)
         {
-            var result = new List<List<PlayerAndActionStringPair>>();
+            var result = new List<TurnBranchInPairs>();
 
             var seperator = _config.SeperatorForWordsInFileName;
-            foreach (var fileName in fileNames)
+            foreach (var dir in dirs)
             {
-                var resultItem = new List<PlayerAndActionStringPair>();
+                var fileName = Path.GetFileNameWithoutExtension(dir);
+                var resPairs = new List<PlayerAndActionStringPair>();
 
                 var splits = fileName.Split(seperator);
                 for (var i = 0; i < splits.Length; i+=2)
                 {
                     var newPair = new PlayerAndActionStringPair(splits[i], splits[i + 1]);
-                    resultItem.Add(newPair);
+                    resPairs.Add(newPair);
                 }
 
-                if(splits.Length/2 != resultItem.Count)
+                if(splits.Length/2 != resPairs.Count)
                 {
                     throw new Exception("function ParsePlayerAndActionFromFileNames malfunctioned");
                 }
 
+                var strategy = File.ReadAllText(dir);
+                _c2StrategyValidityChecker.ThrowIfInvalidFormat(strategy);
+                var resultItem = new TurnBranchInPairs(resPairs, strategy);
                 result.Add(resultItem);
             }
 

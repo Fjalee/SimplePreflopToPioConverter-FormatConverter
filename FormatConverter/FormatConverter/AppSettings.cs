@@ -16,6 +16,15 @@
         public InputPositionNamesOptions PositionNames { get; set; }
         public InputActionNamesOptions ActionNames { get; set; }
         public string AmountCurrency { get; set; }
+        public StrategyDelimitersOptions StrategyDelimiters { get; set; }
+    }
+
+    public class StrategyDelimitersOptions
+    {
+        public string Positions { get; set; }
+        public string Percentage { get; set; }
+        public string RegexPatternPercentage { get; set; }
+        public string RegexPatternHand { get; set; }
     }
 
     public class OutputPatternsOptions
