@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using FormatConverter.IllegalActions;
+using FormatConverter.ValidtyCheckers;
 
 namespace FormatConverter
 { 
@@ -15,22 +16,24 @@ namespace FormatConverter
         private readonly AppSettingsOptions _config;
         private readonly ITurnsLegalityChecker _turnsLegalityChecker;
         private readonly IMatchesTreeLegalityChecker _matchesTreeLegalityChecker;
+        private readonly IC2StrategyValidityChecker _c2StrategyValidityChecker;
 
         public MatchesTreeCreator(ILogger<MatchesTreeCreator> logger, IOptions<AppSettingsOptions> configOptions,
-            ITurnsLegalityChecker turnsLegalityChecker, IMatchesTreeLegalityChecker matchesTreeLegalityChecker)
+            ITurnsLegalityChecker turnsLegalityChecker, IMatchesTreeLegalityChecker matchesTreeLegalityChecker,
+            IC2StrategyValidityChecker c2StrategyValidityChecker)
         {
             _logger = logger;
             _config = configOptions.Value;
             _turnsLegalityChecker = turnsLegalityChecker;
             _matchesTreeLegalityChecker = matchesTreeLegalityChecker;
+            _c2StrategyValidityChecker = c2StrategyValidityChecker;
         }
 
         public MatchesTreeNode Create(string inputDir)
         {
             var childDirs = GetInputDirectoryChildren(inputDir);
 
-            var childFiles = ParseFileNamesFromDirs(childDirs);
-            var playersAndActions = ParsePlayerAndActionFromFileNames(childFiles);
+            var playersAndActions = ParsePlayerAndActionFromFileNames(childDirs);
             var turnsBranches = CreateTurnsFromActionPairs(playersAndActions);
 
             var positionsInUse = GetWhatPositionsAreInUse(turnsBranches);
@@ -246,13 +249,14 @@ namespace FormatConverter
             throw new InvalidDataException("Could now parse action \"" + action + "\"");
         }
 
-        private List<TurnBranchInPairs> ParsePlayerAndActionFromFileNames(List<string> fileNames)
+        private List<TurnBranchInPairs> ParsePlayerAndActionFromFileNames(List<string> dirs)
         {
             var result = new List<TurnBranchInPairs>();
 
             var seperator = _config.SeperatorForWordsInFileName;
-            foreach (var fileName in fileNames)
+            foreach (var dir in dirs)
             {
+                var fileName = Path.GetFileNameWithoutExtension(dir);
                 var resPairs = new List<PlayerAndActionStringPair>();
 
                 var splits = fileName.Split(seperator);
@@ -267,6 +271,8 @@ namespace FormatConverter
                     throw new Exception("function ParsePlayerAndActionFromFileNames malfunctioned");
                 }
 
+                var strategy = File.ReadAllText(dir);
+                _c2StrategyValidityChecker.ThrowIfInvalidFormat(strategy);
                 var resultItem = new TurnBranchInPairs(resPairs, strategy);
                 result.Add(resultItem);
             }

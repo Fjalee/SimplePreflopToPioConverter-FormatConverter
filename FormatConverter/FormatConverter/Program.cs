@@ -1,5 +1,6 @@
 ﻿using FormatConverter.Helpers;
 using FormatConverter.IllegalActions;
+using FormatConverter.ValidtyCheckers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -54,7 +55,9 @@ namespace FormatConverter
                 .Configure<OutputPositionNamesOptions>(
                     config.GetSection("AppSettings").GetSection("OutputPatterns.OutputPositionNames"))
                 .Configure<InputPositionNamesOptions>(
-                    config.GetSection("AppSettings").GetSection("InputPatterns.InputPositionNames"));
+                    config.GetSection("AppSettings").GetSection("InputPatterns.InputPositionNames"))
+                .Configure<StrategyDelimitersOptions>(
+                    config.GetSection("AppSettings").GetSection("InputPatterns").GetSection("StrategyDelimiters"));
 
             services.AddLogging(builder =>
             {
@@ -68,7 +71,8 @@ namespace FormatConverter
                 .AddTransient<ILegalityChecker, LegalityChecker>()
                 .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>()
                 .AddTransient<IMatchesTreeLegalityChecker, MatchesTreeLegalityChecker>()
-                .AddTransient<ITurnHelper, TurnHelper>();
+                .AddTransient<ITurnHelper, TurnHelper>()
+                .AddTransient<IC2StrategyValidityChecker, C2StrategyValidityChecker>();
         }
 
         private static IConfiguration SetupConfiguration()
