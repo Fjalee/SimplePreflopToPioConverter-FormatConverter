@@ -1,5 +1,6 @@
 ﻿using FormatConverter.Helpers;
 using FormatConverter.IllegalActions;
+using FormatConverter.Output;
 using FormatConverter.ValidtyCheckers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,8 +41,9 @@ namespace FormatConverter
             OutputPositionsMetaData = new PositionsMetaData(_config.OutputPatterns.PositionNames.SBName, _config.OutputPatterns.PositionNames.BBName, _config.OutputPatterns.PositionNames.UTGName, _config.OutputPatterns.PositionNames.MP1Name, _config.OutputPatterns.PositionNames.MP2Name, _config.OutputPatterns.PositionNames.MP3Name, _config.OutputPatterns.PositionNames.HIJName, _config.OutputPatterns.PositionNames.COName, _config.OutputPatterns.PositionNames.BTNName);
 
             var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
-            matchesTreeCreator.Create(_config.InputDir);
-
+            var matchesTree = matchesTreeCreator.Create(_config.InputDir);
+            var outputer = serviceProvider.GetService<IMatchesTreeOutputer>();
+            outputer.DoOutput(matchesTree);
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -72,7 +74,8 @@ namespace FormatConverter
                 .AddTransient<ITurnsLegalityChecker, TurnsLegalityChecker>()
                 .AddTransient<IMatchesTreeLegalityChecker, MatchesTreeLegalityChecker>()
                 .AddTransient<ITurnHelper, TurnHelper>()
-                .AddTransient<IC2StrategyValidityChecker, C2StrategyValidityChecker>();
+                .AddTransient<IC2StrategyValidityChecker, C2StrategyValidityChecker>()
+                .AddTransient<IMatchesTreeOutputer, C2Output>();
         }
 
         private static IConfiguration SetupConfiguration()
