@@ -2,13 +2,13 @@
 {
     public class TurnBranchInPairs
     {
-        public PlayerAndActionStringPair Pair { get; set; }
-        public string PathToFile { get; set; }
+        public List<PlayerAndActionStringPair> Pairs { get; set; }
+        public string Strategy { get; set; }
 
-        public TurnBranchInPairs(PlayerAndActionStringPair pair, string pathToFile)
+        public TurnBranchInPairs(List<PlayerAndActionStringPair> pairs, string strategy)
         {
-            Pair = pair;
-            PathToFile = pathToFile;
+            Pairs = pairs;
+            Strategy = strategy;
         }
     }
 }

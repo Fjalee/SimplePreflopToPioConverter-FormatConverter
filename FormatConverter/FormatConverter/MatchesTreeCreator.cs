@@ -179,15 +179,15 @@ namespace FormatConverter
             return result;
         }
 
-        private List<List<Turn>> CreateTurnsFromActionPairs(List<List<PlayerAndActionStringPair>> pairsStrings)
+        private List<List<Turn>> CreateTurnsFromActionPairs(List<TurnBranchInPairs> pairsList)
         {
             var result = new List<List<Turn>>();
 
-            foreach (var pairs in pairsStrings)
+            foreach (var pairs in pairsList)
             {
                 var turns = new List<Turn>();
 
-                foreach (var p in pairs)
+                foreach (var p in pairs.Pairs)
                 {
                     var player = InputPositionsMetaData.GetPlayer(p.Player);
 
@@ -201,6 +201,8 @@ namespace FormatConverter
                     turns.Add(turn);
                 }
 
+
+                turns.Last().Strategy = pairs.Strategy;
                 result.Add(turns);
             }
 
@@ -244,27 +246,28 @@ namespace FormatConverter
             throw new InvalidDataException("Could now parse action \"" + action + "\"");
         }
 
-        private List<List<PlayerAndActionStringPair>> ParsePlayerAndActionFromFileNames(List<string> fileNames)
+        private List<TurnBranchInPairs> ParsePlayerAndActionFromFileNames(List<string> fileNames)
         {
-            var result = new List<List<PlayerAndActionStringPair>>();
+            var result = new List<TurnBranchInPairs>();
 
             var seperator = _config.SeperatorForWordsInFileName;
             foreach (var fileName in fileNames)
             {
-                var resultItem = new List<PlayerAndActionStringPair>();
+                var resPairs = new List<PlayerAndActionStringPair>();
 
                 var splits = fileName.Split(seperator);
                 for (var i = 0; i < splits.Length; i+=2)
                 {
                     var newPair = new PlayerAndActionStringPair(splits[i], splits[i + 1]);
-                    resultItem.Add(newPair);
+                    resPairs.Add(newPair);
                 }
 
-                if(splits.Length/2 != resultItem.Count)
+                if(splits.Length/2 != resPairs.Count)
                 {
                     throw new Exception("function ParsePlayerAndActionFromFileNames malfunctioned");
                 }
 
+                var resultItem = new TurnBranchInPairs(resPairs, strategy);
                 result.Add(resultItem);
             }
 
