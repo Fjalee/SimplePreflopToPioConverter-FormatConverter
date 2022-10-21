@@ -1,4 +1,4 @@
-﻿namespace FormatConverter.Output
+﻿namespace FormatConverter.Helpers
 {
     public static class DirectoryHelper
     {

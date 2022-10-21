@@ -23,7 +23,7 @@ namespace FormatConverter.Helpers
                 case TurnActionEnum.Call or TurnActionEnum.Check:
                     return 1;
                 case TurnActionEnum.Raise or TurnActionEnum.AllIn:
-                    return oldNBet++;
+                    return ++oldNBet;
                 default:
                     throw new Exception("Turn specified action: " + action + " getting nbet was not defined.");
             }
