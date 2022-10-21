@@ -39,6 +39,7 @@ namespace FormatConverter.Output
             var positionNameOutput = Program.OutputPositionsMetaData.GetPlayer(turn.Player.Position);
             var actionNamesOutput = _config.OutputPatterns.ActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
+            var bbText = _config.OutputPatterns.AmountCurrency;
             var newFilePath = "";
             var newDir = "";
 
@@ -52,9 +53,18 @@ namespace FormatConverter.Output
                     newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Call;
                     DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
-                case TurnActionEnum.Raise or TurnActionEnum.AllIn:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Raise;
+                case TurnActionEnum.Raise:
+                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText +
+                        "_" + turn.RaiseAmountInBB + bbText;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName +
+                        "_" + actionNamesOutput.Raise + "_" + turn.RaiseAmountInBB + bbText;
+                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
+                    break;
+                case TurnActionEnum.AllIn:
+                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText
+                        + "_" + actionNamesOutput.AllIn;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName
+                        + "_" + actionNamesOutput.Raise + "_" + actionNamesOutput.AllIn;
                     DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 default:
