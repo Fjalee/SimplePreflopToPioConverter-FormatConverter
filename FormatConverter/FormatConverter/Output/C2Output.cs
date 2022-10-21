@@ -27,9 +27,9 @@ namespace FormatConverter.Output
             {
                 if (currChild.ChildNodes.Count > 0)
                 {
-                    nBet = _turnHelper.GetNBet(nBet, currChild.Turn.Action);
-                    var newDir = OutputNode(currChild.Turn, parentDir, nBet);
-                    RecursivelyOutputEveryNode(currChild.ChildNodes, newDir, nBet);
+                    var newNBet = _turnHelper.GetNBet(nBet, currChild.Turn.Action);
+                    var newDir = OutputNode(currChild.Turn, parentDir, newNBet);
+                    RecursivelyOutputEveryNode(currChild.ChildNodes, newDir, newNBet);
                 }
             }
         }
