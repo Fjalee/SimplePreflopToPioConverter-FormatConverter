@@ -22,13 +22,13 @@
 
         public Player GetPlayer(string positionString)
         {
-            var player = Postions.FirstOrDefault(p => p.PositionName == positionString);
+            var player = Postions.Single(p => p.PositionName == positionString);
             return player;
         }
 
         public Player GetPlayer(PositionEnum positionEnum)
         {
-            var player = Postions.FirstOrDefault(p => p.Position == positionEnum);
+            var player = Postions.Single(p => p.Position == positionEnum);
             return player;
         }
     }

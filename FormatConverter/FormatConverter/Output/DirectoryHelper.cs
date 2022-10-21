@@ -2,7 +2,7 @@
 {
     public static class DirectoryHelper
     {
-        public static void CreateDirThrowIfExists(string path)
+        public static string CreateDirThrowIfExists(string path)
         {
             if (Directory.Exists(path))
             {
@@ -10,6 +10,8 @@
             }
 
             Directory.CreateDirectory(path);
+
+            return path;
         }
     }
 }

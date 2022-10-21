@@ -38,8 +38,8 @@ namespace FormatConverter
             _config = serviceProvider.GetService<IOptions<AppSettingsOptions>>().Value;
 
             InputPositionsMetaData = new PositionsMetaData(_config.InputPatterns.PositionNames.SBName, _config.InputPatterns.PositionNames.BBName, _config.InputPatterns.PositionNames.UTGName, _config.InputPatterns.PositionNames.MP1Name, _config.InputPatterns.PositionNames.MP2Name, _config.InputPatterns.PositionNames.MP3Name, _config.InputPatterns.PositionNames.HIJName, _config.InputPatterns.PositionNames.COName, _config.InputPatterns.PositionNames.BTNName);
-            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPatterns.PositionNames.SBName, _config.OutputPatterns.PositionNames.BBName, _config.OutputPatterns.PositionNames.UTGName, _config.OutputPatterns.PositionNames.MP1Name, _config.OutputPatterns.PositionNames.MP2Name, _config.OutputPatterns.PositionNames.MP3Name, _config.OutputPatterns.PositionNames.HIJName, _config.OutputPatterns.PositionNames.COName, _config.OutputPatterns.PositionNames.BTNName);
 
+            OutputPositionsMetaData = new PositionsMetaData(_config.OutputPatterns.PositionNames.SBName, _config.OutputPatterns.PositionNames.BBName, _config.OutputPatterns.PositionNames.UTGName, _config.OutputPatterns.PositionNames.MP1Name, _config.OutputPatterns.PositionNames.MP2Name, _config.OutputPatterns.PositionNames.MP3Name, _config.OutputPatterns.PositionNames.HIJName, _config.OutputPatterns.PositionNames.COName, _config.OutputPatterns.PositionNames.BTNName);
             var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
             var matchesTree = matchesTreeCreator.Create(_config.InputDir);
             var outputer = serviceProvider.GetService<IMatchesTreeOutputer>();
