@@ -18,10 +18,8 @@ namespace FormatConverter.Helpers
         {
             switch (action)
             {
-                case TurnActionEnum.Fold:
+                case TurnActionEnum.Fold or TurnActionEnum.Call or TurnActionEnum.Check:
                     return oldNBet;
-                case TurnActionEnum.Call or TurnActionEnum.Check:
-                    return 1;
                 case TurnActionEnum.Raise or TurnActionEnum.AllIn:
                     return ++oldNBet;
                 default:
