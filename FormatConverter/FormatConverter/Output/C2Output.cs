@@ -39,6 +39,7 @@ namespace FormatConverter.Output
             var positionNameOutput = Program.OutputPositionsMetaData.GetPlayer(turn.Player.Position);
             var actionNamesOutput = _config.OutputPatterns.ActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
+            var newFilePath = "";
             var newDir = "";
 
             switch (turn.Action)
@@ -48,9 +49,13 @@ namespace FormatConverter.Output
                     break;
                 case TurnActionEnum.Call:
                     newDir = parentDir + "\\" + positionNameOutput.PositionName + actionNamesOutput.Call;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Call;
+                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 case TurnActionEnum.Raise or TurnActionEnum.AllIn:
                     newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Raise;
+                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 default:
                     throw new Exception("Turn specified action: " + turn.Action + " output was not defined.");
