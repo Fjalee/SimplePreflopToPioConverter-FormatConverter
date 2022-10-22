@@ -13,7 +13,7 @@ previous project's SimplePreflopToPioConverter output format converter
     "OutputDir": "your-output-directory"
   }
 }
-``
+```
 
 * appsettings.json
    * adjust "OutputPatterns" and "InputPatterns" objects accordingly
