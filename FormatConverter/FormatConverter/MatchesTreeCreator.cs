@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using FormatConverter.IllegalActions;
 using FormatConverter.ValidtyCheckers;
+using FormatConverter.Helpers;
 
 namespace FormatConverter
 { 
@@ -155,7 +156,8 @@ namespace FormatConverter
 
         private Turn CreateFoldTurn(PositionEnum position)
         {
-            var result = new Turn(InputPositionsMetaData.GetPlayer(position), TurnActionEnum.Fold, "");
+            var player = PositionsHelper.GetPlayer(position, _config.InputPatterns.PositionNames);
+            var result = new Turn(player, TurnActionEnum.Fold, "");
             return result;
         }
 
@@ -201,7 +203,7 @@ namespace FormatConverter
 
                 foreach (var p in pairs.Pairs)
                 {
-                    var player = InputPositionsMetaData.GetPlayer(p.Player);
+                    var player = PositionsHelper.GetPlayer(p.Player, _config.InputPatterns.PositionNames);
 
                     var actionAndAmount = ParseAction(p.Action);
                     var action = actionAndAmount.Item1;

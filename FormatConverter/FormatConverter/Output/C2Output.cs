@@ -36,7 +36,7 @@ namespace FormatConverter.Output
 
         private string OutputNode(Turn turn, string parentDir, int nBet)
         {
-            var positionNameOutput = Program.OutputPositionsMetaData.GetPlayer(turn.Player.Position);
+            var positionNameOutput = PositionsHelper.GetPlayer(turn.Player.Position, _config.OutputPatterns.PositionNames);
             var strategyFilesActionNamesOutput = _config.OutputPatterns.StrategyFileActionNames;
             var folderActionNamesOutput = _config.OutputPatterns.FolderActionNames;
             var nBetText = _config.OutputPatterns.NBetText;

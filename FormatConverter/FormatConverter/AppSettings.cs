@@ -4,8 +4,8 @@
     {
         public OutputPatternsOptions OutputPatterns { get; set; }
         public InputPatternsOptions InputPatterns { get; set; }
-        public OutputPositionNamesOptions OutputPositionNames { get; set; }
-        public InputPositionNamesOptions InputPositionNames { get; set; }
+        public PositionNamesOptions OutputPositionNames { get; set; }
+        public PositionNamesOptions InputPositionNames { get; set; }
         public string InputDir { get; set; }
         public string OutputDir { get; set; }
         public string RegexForVsBetFolder { get; set; }
@@ -14,7 +14,7 @@
 
     public class InputPatternsOptions
     {
-        public InputPositionNamesOptions PositionNames { get; set; }
+        public PositionNamesOptions PositionNames { get; set; }
         public InputActionNamesOptions ActionNames { get; set; }
         public string AmountCurrency { get; set; }
         public StrategyDelimitersOptions StrategyDelimiters { get; set; }
@@ -30,7 +30,7 @@
 
     public class OutputPatternsOptions
     {
-        public OutputPositionNamesOptions PositionNames { get; set; }
+        public PositionNamesOptions PositionNames { get; set; }
         public OutputActionNamesOptions ActionNames { get; set; }
         public OutputActionNamesOptions FolderActionNames { get; set; }
         public OutputActionNamesOptions StrategyFileActionNames { get; set; }
@@ -56,20 +56,7 @@
         public string Check { get; set; }
     }
 
-    public class OutputPositionNamesOptions
-    {
-        public string SBName { get; set; }
-        public string BBName { get; set; }
-        public string UTGName { get; set; }
-        public string MP1Name { get; set; }
-        public string MP2Name { get; set; }
-        public string MP3Name { get; set; }
-        public string HIJName { get; set; }
-        public string COName { get; set; }
-        public string BTNName { get; set; }
-    }
-
-    public class InputPositionNamesOptions
+    public class PositionNamesOptions
     {
         public string SBName { get; set; }
         public string BBName { get; set; }
