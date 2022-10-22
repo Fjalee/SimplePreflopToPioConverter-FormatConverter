@@ -16,3 +16,5 @@ previous project's SimplePreflopToPioConverter output format converter
 ```
    * Change your-input-directory and your-ioutput-directory to input and output directories
 
+* appsettings.json
+   * adjust "OutputPatterns" and "InputPatterns" objects accordingly
