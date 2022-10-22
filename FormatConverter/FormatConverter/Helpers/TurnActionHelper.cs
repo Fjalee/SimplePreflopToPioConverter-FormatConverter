@@ -26,7 +26,7 @@ namespace FormatConverter.Helpers
                 case TurnActionEnum.AllIn:
                     return posNames.AllIn;
                 default:
-                    throw new ArgumentException("TurnActionEnum: " + action + ", was not declared in TurnActionHelper"; 
+                    throw new ArgumentException("TurnActionEnum: " + action + ", was not declared in TurnActionHelper"); 
             }
         }
     }
