@@ -5,8 +5,8 @@ previous project's SimplePreflopToPioConverter output format converter
 
 ## How to use 
 * local-appsettings.json
-   * create file 'local-appsettings.json', write inside:
-```
+   * create file 'local-appsettings.json', write inside: ```
+
 {
   "AppSettings": {
     "InputDir": "your-input-directory",
