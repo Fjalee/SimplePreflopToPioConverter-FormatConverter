@@ -7,6 +7,7 @@
         public OutputPositionNamesOptions OutputPositionNames { get; set; }
         public InputPositionNamesOptions InputPositionNames { get; set; }
         public string InputDir { get; set; }
+        public string OutputDir { get; set; }
         public string RegexForVsBetFolder { get; set; }
         public string SeperatorForWordsInFileName { get; set; }
     }
@@ -31,7 +32,10 @@
     {
         public OutputPositionNamesOptions PositionNames { get; set; }
         public OutputActionNamesOptions ActionNames { get; set; }
+        public OutputActionNamesOptions FolderActionNames { get; set; }
+        public OutputActionNamesOptions StrategyFileActionNames { get; set; }
         public string AmountCurrency { get; set; }
+        public string NBetText { get; set; }
     }
 
     public class InputActionNamesOptions

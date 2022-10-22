@@ -13,5 +13,18 @@ namespace FormatConverter.Helpers
             }
             return raiseAmount;
         }
+
+        public int GetNBet(int oldNBet, TurnActionEnum action)
+        {
+            switch (action)
+            {
+                case TurnActionEnum.Fold or TurnActionEnum.Call or TurnActionEnum.Check:
+                    return oldNBet;
+                case TurnActionEnum.Raise or TurnActionEnum.AllIn:
+                    return ++oldNBet;
+                default:
+                    throw new Exception("Turn specified action: " + action + " getting nbet was not defined.");
+            }
+        }
     }
 }

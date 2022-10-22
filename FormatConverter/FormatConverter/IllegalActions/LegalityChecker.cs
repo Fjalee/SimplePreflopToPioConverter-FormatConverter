@@ -54,7 +54,7 @@ namespace FormatConverter.IllegalActions
             }
 
             if (currTurn.Action == TurnActionEnum.AllIn
-                || TurnActionEnumHelper.OnlyContainsFoldAndCheck(currState.AvailableActions))
+                || TurnActionHelper.OnlyContainsFoldAndCheck(currState.AvailableActions))
             {
                 currState.PositionsStillInPlay.Remove(currTurn.Player.Position);
             }
