@@ -25,11 +25,11 @@ namespace FormatConverter.Output
         {
             foreach (var currChild in childNodes)
             {
+                OutputNodeStrategyFile(currChild.Turn, parentDir);
                 if (currChild.ChildNodes.Count > 0)
                 {
                     var newNBet = _turnHelper.GetNBet(nBet, currChild.Turn.Action);
                     var newDir = OutputNode(currChild.Turn, parentDir, newNBet);
-                    OutputNodeStrategyFile(currChild.Turn, parentDir);
 
                     RecursivelyOutputEveryNode(currChild.ChildNodes, newDir, newNBet);
                 }
