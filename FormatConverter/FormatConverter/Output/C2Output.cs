@@ -37,7 +37,7 @@ namespace FormatConverter.Output
         private string OutputNode(Turn turn, string parentDir, int nBet)
         {
             var positionNameOutput = Program.OutputPositionsMetaData.GetPlayer(turn.Player.Position);
-            var actionNamesOutput = _config.OutputPatterns.ActionNames;
+            var strategyFilesActionNamesOutput = _config.OutputPatterns.StrategyFileActionNames;
             var folderActionNamesOutput = _config.OutputPatterns.FolderActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
             var newDir = "";
@@ -57,7 +57,7 @@ namespace FormatConverter.Output
 
             if(turn.Action != TurnActionEnum.Fold)
             {
-                var newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + TurnActionHelper.GetActionString(turn.Action, actionNamesOutput);
+                var newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + TurnActionHelper.GetActionString(turn.Action, strategyFilesActionNamesOutput);
                 DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
             }
 
