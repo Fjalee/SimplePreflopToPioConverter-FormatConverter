@@ -4,8 +4,6 @@
     {
         public OutputPatternsOptions OutputPatterns { get; set; }
         public InputPatternsOptions InputPatterns { get; set; }
-        public PositionNamesOptions OutputPositionNames { get; set; }
-        public PositionNamesOptions InputPositionNames { get; set; }
         public string InputDir { get; set; }
         public string OutputDir { get; set; }
         public string RegexForVsBetFolder { get; set; }
@@ -31,7 +29,6 @@
     public class OutputPatternsOptions
     {
         public PositionNamesOptions PositionNames { get; set; }
-        public OutputActionNamesOptions ActionNames { get; set; }
         public OutputActionNamesOptions FolderActionNames { get; set; }
         public OutputActionNamesOptions StrategyFileActionNames { get; set; }
         public string AmountCurrency { get; set; }
