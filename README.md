@@ -5,12 +5,12 @@ previous project's SimplePreflopToPioConverter output format converter
 
 ## How to use 
 * local-appsettings.json
-   * create file 'local-appsettings.json', and change your-input-directory and your-ioutput-directory accordingly
+   * create file 'local-appsettings.json', and change your-input-directory and your-output-directory accordingly
 ```
 {
   "AppSettings": {
     "InputDir": "your-input-directory",
-    "OutputDir": "your-ioutput-directory"
+    "OutputDir": "your-output-directory"
   }
 }
 ``
