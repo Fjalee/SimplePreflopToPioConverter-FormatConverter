@@ -5,10 +5,11 @@ previous project's SimplePreflopToPioConverter output format converter
 
 ## How to use 
 * create file 'local-appsettings.json', write inside:
-``` {
+```
+{
   "AppSettings": {
     "InputDir": "C:\\Users\\cepRy\\Desktop\\PS100bb",
     "OutputDir": "C:\\Users\\cepRy\\Desktop\\PS100bb_conv"
   }
 }
-
+```
