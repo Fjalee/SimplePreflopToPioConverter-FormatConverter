@@ -38,8 +38,8 @@ namespace FormatConverter.Output
         {
             var positionNameOutput = Program.OutputPositionsMetaData.GetPlayer(turn.Player.Position);
             var actionNamesOutput = _config.OutputPatterns.ActionNames;
+            var folderActionNamesOutput = _config.OutputPatterns.FolderActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
-            var bbText = _config.OutputPatterns.AmountCurrency;
             var newFilePath = "";
             var newDir = "";
 
@@ -54,17 +54,13 @@ namespace FormatConverter.Output
                     DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 case TurnActionEnum.Raise:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText +
-                        "_" + turn.RaiseAmountInBB + bbText;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName +
-                        "_" + actionNamesOutput.Raise + "_" + turn.RaiseAmountInBB + bbText;
+                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Raise;
                     DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 case TurnActionEnum.AllIn:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText
-                        + "_" + actionNamesOutput.AllIn;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName
-                        + "_" + actionNamesOutput.Raise + "_" + actionNamesOutput.AllIn;
+                    newDir = parentDir + "\\" + positionNameOutput.PositionName + folderActionNamesOutput.AllIn;
+                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.AllIn;
                     DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
                     break;
                 default:
@@ -73,5 +69,7 @@ namespace FormatConverter.Output
 
             return DirectoryHelper.CreateDirThrowIfExists(newDir);
         }
+
+        private 
     }
 }

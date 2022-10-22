@@ -32,6 +32,7 @@
     {
         public OutputPositionNamesOptions PositionNames { get; set; }
         public OutputActionNamesOptions ActionNames { get; set; }
+        public OutputActionNamesOptions FolderActionNames { get; set; }
         public string AmountCurrency { get; set; }
         public string NBetText { get; set; }
     }
