@@ -10,5 +10,5 @@ previous project's SimplePreflopToPioConverter output format converter
     "InputDir": "C:\\Users\\cepRy\\Desktop\\PS100bb",
     "OutputDir": "C:\\Users\\cepRy\\Desktop\\PS100bb_conv"
   }
-} ```
+}
 
