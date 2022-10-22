@@ -41,7 +41,6 @@ namespace FormatConverter.Output
             var folderActionNamesOutput = _config.OutputPatterns.FolderActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
             var actionName = TurnActionHelper.GetActionString(turn.Action, actionNamesOutput);
-            var newFilePath = "";
             var newDir = "";
 
             if(turn.Action == TurnActionEnum.Raise)
@@ -51,7 +50,6 @@ namespace FormatConverter.Output
             else if (turn.Action == TurnActionEnum.Fold || turn.Action == TurnActionEnum.Call || turn.Action == TurnActionEnum.AllIn)
             {
                 newDir = parentDir + "\\" + positionNameOutput.PositionName + actionName;
-                newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionName;
             }
             else
             {
@@ -60,6 +58,7 @@ namespace FormatConverter.Output
 
             if(turn.Action != TurnActionEnum.Fold)
             {
+                var newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionName;
                 DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
             }
 
