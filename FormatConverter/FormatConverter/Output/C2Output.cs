@@ -40,36 +40,30 @@ namespace FormatConverter.Output
             var actionNamesOutput = _config.OutputPatterns.ActionNames;
             var folderActionNamesOutput = _config.OutputPatterns.FolderActionNames;
             var nBetText = _config.OutputPatterns.NBetText;
+            var actionName = TurnActionHelper.GetActionString(turn.Action, actionNamesOutput);
             var newFilePath = "";
             var newDir = "";
 
-            switch (turn.Action)
+            if(turn.Action == TurnActionEnum.Raise)
             {
-                case TurnActionEnum.Fold:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + actionNamesOutput.Fold;
-                    break;
-                case TurnActionEnum.Call:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + actionNamesOutput.Call;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Call;
-                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
-                    break;
-                case TurnActionEnum.Raise:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.Raise;
-                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
-                    break;
-                case TurnActionEnum.AllIn:
-                    newDir = parentDir + "\\" + positionNameOutput.PositionName + folderActionNamesOutput.AllIn;
-                    newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionNamesOutput.AllIn;
-                    DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
-                    break;
-                default:
-                    throw new Exception("Turn specified action: " + turn.Action + " output was not defined.");
+                newDir = parentDir + "\\" + positionNameOutput.PositionName + nBet + nBetText;
+            }
+            else if (turn.Action == TurnActionEnum.Fold || turn.Action == TurnActionEnum.Call || turn.Action == TurnActionEnum.AllIn)
+            {
+                newDir = parentDir + "\\" + positionNameOutput.PositionName + actionName;
+                newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + actionName;
+            }
+            else
+            {
+                throw new Exception("Turn specified action: " + turn.Action + " output was not defined.");
+            }
+
+            if(turn.Action != TurnActionEnum.Fold)
+            {
+                DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
             }
 
             return DirectoryHelper.CreateDirThrowIfExists(newDir);
         }
-
-        private 
     }
 }
