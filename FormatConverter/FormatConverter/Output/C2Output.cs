@@ -9,23 +9,30 @@ namespace FormatConverter.Output
         private readonly AppSettingsOptions _config;
         private readonly ITurnHelper _turnHelper;
 
+        public int OutputFilesCount { get; set; } = 0;
+
         public C2Output(IOptions<AppSettingsOptions> configOptions, ITurnHelper turnHelper)
         {
             _config = configOptions.Value;
             _turnHelper = turnHelper;
         }
 
-        public void DoOutput(MatchesTreeNode treeRoot)
+        public int DoOutput(MatchesTreeNode treeRoot)
         {
             var dir = DirectoryHelper.CreateDirThrowIfExists(_config.OutputDir);
             RecursivelyOutputEveryNode(treeRoot.ChildNodes, dir, 1);
+            return OutputFilesCount;
         }
 
         private void RecursivelyOutputEveryNode(List<MatchesTreeNode> childNodes, string parentDir, int nBet)
         {
             foreach (var currChild in childNodes)
             {
-                OutputNodeStrategyFile(currChild.Turn, parentDir);
+                if (currChild.Turn.Action != TurnActionEnum.Fold)
+                {
+                    OutputNodeStrategyFile(currChild.Turn, parentDir);
+                    OutputFilesCount++;
+                }
                 if (currChild.ChildNodes.Count > 0)
                 {
                     var newNBet = _turnHelper.GetNBet(nBet, currChild.Turn.Action);
@@ -63,13 +70,8 @@ namespace FormatConverter.Output
         {
             var positionNameOutput = PositionsHelper.GetPlayer(turn.Player.Position, _config.OutputPatterns.PositionNames);
             var strategyFilesActionNamesOutput = _config.OutputPatterns.StrategyFileActionNames;
-            var newFilePath = "";
-
-            if (turn.Action != TurnActionEnum.Fold)
-            {
-                newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + TurnActionHelper.GetActionString(turn.Action, strategyFilesActionNamesOutput);
-                DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
-            }
+            var newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + TurnActionHelper.GetActionString(turn.Action, strategyFilesActionNamesOutput);
+            DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
             return newFilePath;
         }
     }

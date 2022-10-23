@@ -4,6 +4,6 @@ namespace FormatConverter.Output
 {
     public interface IMatchesTreeOutputer
     {
-        void DoOutput(MatchesTreeNode treeRoot);
+        int DoOutput(MatchesTreeNode treeRoot);
     }
 }

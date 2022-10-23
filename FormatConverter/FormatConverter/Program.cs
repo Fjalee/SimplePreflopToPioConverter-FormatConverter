@@ -38,7 +38,8 @@ namespace FormatConverter
             var matchesTreeCreator = serviceProvider.GetService<IMatchesTreeCreator>();
             var matchesTree = matchesTreeCreator.Create(_config.InputDir);
             var outputer = serviceProvider.GetService<IMatchesTreeOutputer>();
-            outputer.DoOutput(matchesTree);
+            var outputFilesCount = outputer.DoOutput(matchesTree);
+            _logger.LogInformation("Created " + outputFilesCount + " files (no Fold as last move files.)");
         }
 
         private static void ConfigureServices(IServiceCollection services)
