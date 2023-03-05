@@ -16,4 +16,6 @@ previous project's SimplePreflopToPioConverter output format converter
 ```
 
 * appsettings.json
+   * to add bb amount on raise files set IsShowAmountForRaise to "true", otherwise set to "false"
+      * eg.      LJ_raise.txt      -->      LJ_raise_2.2bb.txt
    * adjust "OutputPatterns" and "InputPatterns" objects accordingly
