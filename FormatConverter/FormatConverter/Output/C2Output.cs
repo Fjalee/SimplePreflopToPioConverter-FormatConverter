@@ -70,7 +70,15 @@ namespace FormatConverter.Output
         {
             var positionNameOutput = PositionsHelper.GetPlayer(turn.Player.Position, _config.OutputPatterns.PositionNames);
             var strategyFilesActionNamesOutput = _config.OutputPatterns.StrategyFileActionNames;
+            var amountCurrency = _config.OutputPatterns.AmountCurrency;
+            var isShowAmountForRaise = _config.OutputPatterns.IsShowAmountForRaise;
+
             var newFilePath = parentDir + "\\" + positionNameOutput.PositionName + "_" + TurnActionHelper.GetActionString(turn.Action, strategyFilesActionNamesOutput);
+            if (isShowAmountForRaise && turn.RaiseAmountInBB != null && turn.RaiseAmountInBB != "")
+            {
+                newFilePath += $"_{turn.RaiseAmountInBB}{amountCurrency}";
+            }
+
             DirectoryHelper.CreateTxtFileThrowIfExists(newFilePath, turn.Strategy);
             return newFilePath;
         }

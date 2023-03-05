@@ -33,6 +33,7 @@
         public OutputActionNamesOptions StrategyFileActionNames { get; set; }
         public string AmountCurrency { get; set; }
         public string NBetText { get; set; }
+        public bool IsShowAmountForRaise { get; set; }
     }
 
     public class InputActionNamesOptions
