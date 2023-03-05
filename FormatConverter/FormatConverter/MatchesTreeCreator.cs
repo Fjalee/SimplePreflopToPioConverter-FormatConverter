@@ -257,7 +257,7 @@ namespace FormatConverter
                 return new Tuple<TurnActionEnum, string>(TurnActionEnum.Raise, raiseAmount);
             }
 
-            throw new InvalidDataException("Could now parse action \"" + action + "\"");
+            throw new InvalidDataException("Could not parse action \"" + action + "\"");
         }
 
         private List<TurnBranchInPairs> ParsePlayerAndActionFromFileNames(List<string> dirs)
