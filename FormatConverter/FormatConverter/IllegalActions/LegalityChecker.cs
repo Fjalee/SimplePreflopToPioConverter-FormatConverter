@@ -49,7 +49,7 @@ namespace FormatConverter.IllegalActions
                 }
                 if (currTurn.Action == TurnActionEnum.Raise || currTurn.Action == TurnActionEnum.AllIn)
                 {
-                    currState.CallAmount = Convert.ToDouble(currTurn.RaiseAmountInBB);
+                    currState.CallAmount = Convert.ToDouble(currTurn.RaiseAmountInBB, CultureHelper.Culture);
                 }
             }
 
